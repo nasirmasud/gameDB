@@ -1,0 +1,38 @@
+/*
+  shadcn init চালানোর পর app/globals.css-এ যে :root ব্লক জেনারেট হবে,
+  তার ভেতরের ভ্যালুগুলো এই কালারগুলো দিয়ে replace করো।
+  পুরো ব্লক মুছে নতুন বসিও না — শুধু ভ্যালুগুলো বদলাও, যেন shadcn-এর
+  বাকি ভ্যারিয়েবল (radius, chart colors ইত্যাদি) অক্ষত থাকে।
+*/
+
+:root {
+  --radius: 0.75rem;
+
+  --background: oklch(0.15 0.02 260);        /* deep navy-black, hero card bg */
+  --foreground: oklch(0.98 0 0);              /* near-white text */
+
+  --card: oklch(0.19 0.02 260);               /* slightly lighter than bg, for game cards */
+  --card-foreground: oklch(0.98 0 0);
+
+  --popover: oklch(0.19 0.02 260);
+  --popover-foreground: oklch(0.98 0 0);
+
+  --primary: oklch(0.83 0.22 128);            /* neon green accent (View Details, active nav) */
+  --primary-foreground: oklch(0.15 0.02 260); /* dark text on green buttons */
+
+  --secondary: oklch(0.24 0.02 260);          /* muted panel bg (secondary buttons) */
+  --secondary-foreground: oklch(0.98 0 0);
+
+  --muted: oklch(0.24 0.02 260);
+  --muted-foreground: oklch(0.65 0.01 260);   /* grey meta text (dates, platforms) */
+
+  --accent: oklch(0.24 0.02 260);
+  --accent-foreground: oklch(0.98 0 0);
+
+  --destructive: oklch(0.58 0.22 25);         /* ban/delete actions */
+  --destructive-foreground: oklch(0.98 0 0);
+
+  --border: oklch(1 0 0 / 10%);               /* subtle hairline on dark bg */
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.83 0.22 128 / 50%);          /* green focus ring */
+}

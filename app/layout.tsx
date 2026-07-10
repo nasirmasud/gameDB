@@ -1,4 +1,6 @@
+import Footer from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
@@ -25,6 +27,7 @@ export default function RootLayout({
   return (
     <html
       lang='en'
+      suppressHydrationWarning
       className={cn(
         "h-full",
         "antialiased",
@@ -34,10 +37,13 @@ export default function RootLayout({
       )}
     >
       <body className='min-h-full flex flex-col font-sans'>
-        <SessionProvider>
-          <Navbar />
-          {children}
-        </SessionProvider>
+        <ThemeProvider>
+          <SessionProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
