@@ -1,3 +1,5 @@
+import Image from "next/image";
+import Link from "next/link";
 import { FaDiscord, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
 
 export default function Footer() {
@@ -8,10 +10,18 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className='flex items-center gap-2'>
-              <span className='text-xl'>🎮</span>
-              <span className='text-lg font-semibold text-foreground'>
-                GameDB
-              </span>
+              <Link href='/' className='flex items-center gap-2 shrink-0'>
+                <Image
+                  src='/favicon.ico'
+                  alt='GameDB Logo'
+                  width={64}
+                  height={64}
+                  className='h-10 w-10 object-contain'
+                />
+                <span className='text-lg font-bold tracking-tight text-foreground'>
+                  GameDB
+                </span>
+              </Link>
             </div>
             <p className='mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground'>
               Your ultimate gaming database. Discover, track, and explore the

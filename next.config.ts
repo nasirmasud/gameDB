@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
         hostname: "media.rawg.io",
       },
     ],
+    unoptimized: true,
   },
 };
 

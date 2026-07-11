@@ -4,7 +4,8 @@ import { NavLink } from "@/components/layout/NavLink";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { UserMenu } from "@/components/layout/UserMenu";
 import { Button } from "@/components/ui/button";
-import { Gamepad2, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 const NAV_LINKS = [
@@ -23,7 +24,13 @@ export async function Navbar() {
       <div className='flex h-16 w-full items-center gap-6 px-8 md:px-12 lg:px-16'>
         {/* Logo */}
         <Link href='/' className='flex items-center gap-2 shrink-0'>
-          <Gamepad2 className='h-6 w-6 text-primary' />
+          <Image
+            src='/favicon.ico'
+            alt='GameDB Logo'
+            width={64}
+            height={64}
+            className='h-15 w-15 object-contain'
+          />
           <span className='text-lg font-bold tracking-tight text-foreground'>
             GameDB
           </span>
