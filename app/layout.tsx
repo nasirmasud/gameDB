@@ -2,6 +2,7 @@ import Footer from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Geist, Manrope } from "next/font/google";
@@ -42,6 +43,7 @@ export default function RootLayout({
             <Navbar />
             {children}
             <Footer />
+            <Toaster theme='dark' position='bottom-center' />
           </SessionProvider>
         </ThemeProvider>
       </body>
