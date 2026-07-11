@@ -75,7 +75,8 @@ gamedb/
 │   └── api/
 │       ├── auth/[...nextauth]/route.ts
 │       ├── register/route.ts
-│       └── hero-games/route.ts
+│       ├── hero-games/route.ts
+│       └── games/route.ts
 ├── components/
 │   ├── layout/                    # Navbar, MobileNav, UserMenu, NavLink, ThemeToggle
 │   ├── auth/                      # LoginForm, RegisterForm
@@ -104,8 +105,8 @@ gamedb/
 - Navbar: sticky, responsive, 4 routes logged-out, 5+ via UserMenu dropdown logged-in
 - Hero section (HeroSlider — Swiper carousel, RAWG top-rated games with
   ratings-count threshold + dedupe logic, CTA buttons)
-- Homepage sections: Popular Games (GameRow), Genre Grid — need to confirm
-  Top Rated / Upcoming rows are also added to reach 7 total
+- Homepage sections: 5 sections — HeroSlider, PopularGames (GameRow), GenreGrid,
+  UpcomingGames, TopRatedGames
 - Footer (built, contains working nav + social links)
 - Card section: consistent size/radius, 4/row desktop, skeleton loader
   (`GameCardSkeleton`)
@@ -116,10 +117,12 @@ gamedb/
   not fabricated articles)
 - Auth: register, login, demo-login button, bcrypt hashing, role field on
   User model, route protection via `proxy.ts`
+- **Game Details page** (`/games/[id]`) — fetches from RAWG via
+  `getGameById` + `getGameScreenshots`; breadcrumb, cover, info panel,
+  screenshot gallery, rating breakdown bar chart, about/specs sidebar,
+  similar games by genre
 
 ### Not yet built ⬜
-- **Game Details page** (`/games/[id]`) — highest priority, many cards
-  already link here and currently 404
 - **Reviews/Ratings UI** — model exists, no form/list component yet
 - **Favorites/Wishlist UI** — model exists, no add-button or list page yet
 - **`/items/add`** — protected form for CustomGame submission
@@ -127,9 +130,17 @@ gamedb/
   with View/Delete actions
 - **Admin panel** (`/admin`) — user list, ban/delete actions; `role`/
   `isBanned` fields already exist on the User model, UI is missing
-- **About, Contact** pages (2 additional pages required — News/Genres/
+- **About, Contact pages** (2 additional pages required — News/Genres/
   Platforms may already satisfy this, but About/Contact are the more
   conventional choice and safer for the rubric)
+- **Upcoming / New Releases section on homepage** — `getUpcomingGames()`
+  exists in `lib/rawg.ts` but is not connected to any component
+- **Homepage only has 4 sections** (HeroSlider, PopularGames, GenreGrid,
+  TopRatedGames) — plan targets 7 total. Consider adding Upcoming, New
+  Releases, and another row (e.g. most anticipated)
+- **Footer dead links** — all footer "Discover/Community/Support" links
+  use `href="#"` and lead nowhere
+- **Navbar search input** — visual-only, no form submission or router push
 - **Social login** (optional, skip unless time remains)
 - **Recharts chart** on admin page (optional nice-to-have, not required
   by the rubric text directly but pairs well with admin stats)
@@ -138,10 +149,10 @@ gamedb/
 
 ## 5. Remaining Build Order
 
-1. **Game Details page** (`/games/[id]`)
+1. ✅ **Game Details page** (`/games/[id]`)
    - Fetch via `getGameById` + `getGameScreenshots` from `lib/rawg.ts`
-   - Sections: image gallery, overview, key info/specs, reviews, related
-     games (same genre)
+   - Sections: breadcrumb nav, cover image, info panel, screenshot gallery,
+     rating breakdown bar chart, about/specs sidebar, similar games by genre
    - This unblocks every existing "View Details" link across the app
 
 2. **Reviews system**
@@ -167,16 +178,21 @@ gamedb/
      DELETE)
    - Protected via existing `role === "admin"` check in `auth.config.ts`
 
-7. **About / Contact pages**
+7. **Upcoming / New Releases section** on homepage (use existing
+   `getUpcomingGames()` from `lib/rawg.ts`)
 
-8. **QA pass** — every nav/footer link resolves, no dead `href="#"`,
-   responsive check at mobile/tablet/desktop, skeletons visible under
-   throttled network
+8. **About / Contact pages**
 
-9. **Deploy** — Vercel + MongoDB Atlas, set env vars
-   (`MONGODB_URI`, `AUTH_SECRET`, `RAWG_API_KEY`)
+9. **Footer dead link fix + Navbar search wiring**
 
-10. **README** — setup steps, demo credentials, architecture note
+10. **QA pass** — every nav/footer link resolves, no dead `href="#"`,
+    responsive check at mobile/tablet/desktop, skeletons visible under
+    throttled network
+
+11. **Deploy** — Vercel + MongoDB Atlas, set env vars
+    (`MONGODB_URI`, `AUTH_SECRET`, `RAWG_API_KEY`)
+
+12. **README** — setup steps, demo credentials, architecture note
 
 ---
 
@@ -206,10 +222,13 @@ committed to the repo.
 - [ ] GitHub repo link
 - [ ] Demo credentials in README (user + admin)
 - [ ] All nav/footer links functional, no 404s
-- [ ] Details page live for every game card
+- [x] Details page live for every game card
 - [ ] Reviews + Favorites working end to end
 - [ ] `/items/add` and `/items/manage` protected + functional
 - [ ] Admin can ban/delete users
+- [ ] Homepage has 7 sections (currently 4)
+- [ ] Footer links resolve (currently all `#`)
+- [ ] Navbar search functional
 - [ ] Mobile/tablet/desktop responsive check done
 - [ ] No lorem ipsum / placeholder content anywhere
 - [ ] Skeleton loaders visible on slow network

@@ -43,3 +43,12 @@ next-env.d.ts
 # seed scripts (contain hardcoded demo/admin credentials)
 **/seed*
 **/*seed*
+
+# ignore .agents directory
+.agents/
+
+# ignore all markdown files
+*.md
+
+# but do not ignore README.md
+!README.md

@@ -23,6 +23,13 @@ export interface RawgGameSummary {
   short_screenshots?: { id: number; image: string }[];
 }
 
+export interface RawgRating {
+  id: number;
+  title: string;
+  count: number;
+  percent: number;
+}
+
 export interface RawgGameDetail extends RawgGameSummary {
   description_raw: string;
   website: string;
@@ -30,6 +37,7 @@ export interface RawgGameDetail extends RawgGameSummary {
   developers: { id: number; name: string }[];
   publishers: { id: number; name: string }[];
   tags: { id: number; name: string }[];
+  ratings: RawgRating[];
 }
 
 export interface RawgListResponse<T> {
@@ -95,6 +103,25 @@ export function getGameById(id: number | string) {
 export function getGameScreenshots(id: number | string) {
   return rawgFetch<RawgListResponse<{ id: number; image: string }>>(`/games/${id}/screenshots`);
 }
+
+export interface RawgMovieData {
+  max: string;
+}
+
+export interface RawgMovie {
+  id: number;
+  name: string;
+  preview: string;
+  data: RawgMovieData;
+}
+
+export function getGameMovies(id: number | string) {
+  return rawgFetch<RawgListResponse<RawgMovie>>(`/games/${id}/movies`);
+}
+
+export type MediaItem =
+  | { type: "screenshot"; id: number; image: string }
+  | { type: "movie"; id: number; preview: string; videoUrl: string; name: string };
 
 export function getGenres() {
   return rawgFetch<RawgListResponse<{ id: number; name: string; slug: string; games_count: number }>>(
