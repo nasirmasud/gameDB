@@ -9,7 +9,7 @@ export async function GenreGrid() {
   const genres = results.slice(0, 8);
 
   return (
-    <section className='mx-auto w-full px-4 py-8 sm:px-6 lg:px-8'>
+    <section className='mx-auto w-full px-4 py-20 sm:px-6 lg:px-8'>
       <div className='mb-4 flex items-center justify-between'>
         <h2 className='text-xl font-bold text-foreground'>Browse by Genre</h2>
         <Link
@@ -27,7 +27,7 @@ export async function GenreGrid() {
             <Link
               key={genre.id}
               href={`/explore?genres=${genre.slug}`}
-              className='group flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-5 text-center transition-colors hover:bg-secondary'
+              className='group flex flex-col items-center gap-3 rounded-xs border border-border bg-card p-5 text-center transition-colors hover:bg-secondary'
             >
               <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-primary/10'>
                 <Icon className='h-6 w-6' />

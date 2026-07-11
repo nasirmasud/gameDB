@@ -33,7 +33,7 @@ export function GameRow({
   };
 
   return (
-    <section className='mx-auto w-full px-4 py-8 sm:px-6 lg:px-8'>
+    <section className='mx-auto w-full px-4 py-20 sm:px-6 lg:px-8'>
       <div className='mb-4 flex items-center justify-between'>
         <h2 className='text-xl font-bold text-foreground'>{title}</h2>
         <Link

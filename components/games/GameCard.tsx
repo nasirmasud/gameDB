@@ -20,7 +20,7 @@ export function GameCard({ game }: GameCardProps) {
   return (
     <Link
       href={`/games/${game.id}`}
-      className='group relative flex w-full shrink-0 flex-col overflow-hidden rounded-2xl border border-border bg-card transition-transform hover:-translate-y-1'
+      className='group relative flex w-full shrink-0 flex-col overflow-hidden rounded-sm border border-border bg-card transition-transform hover:-translate-y-1'
     >
       <div className='relative aspect-[4/5] w-full overflow-hidden'>
         {game.background_image ? (

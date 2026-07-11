@@ -129,10 +129,12 @@ function HeroSlide({ game }: { game: HeroGame }) {
           <PlatformIcons slugs={game.platformSlugs} />
 
           {/* CTAs */}
+          {/* CTAs */}
           <div className='mt-7 flex flex-wrap items-center gap-3'>
             <Link
               href={`/games/${game.slug}`}
-              className='inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-500 to-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-900/30 transition hover:brightness-110'
+              // h-12 এবং border-transparent যোগ করা হয়েছে
+              className='inline-flex h-12 items-center gap-2 rounded-xs border border-transparent border-r-0 bg-gradient-to-r from-blue-500 to-violet-600 px-6 text-sm font-semibold text-white shadow-lg shadow-violet-900/30 transition hover:brightness-110'
             >
               View Details
               <ArrowRight className='h-4 w-4' />
@@ -140,7 +142,8 @@ function HeroSlide({ game }: { game: HeroGame }) {
 
             <Link
               href={`/games/${game.slug}#trailer`}
-              className='inline-flex items-center gap-2 rounded-lg border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10'
+              // h-12 যোগ করা হয়েছে
+              className='inline-flex h-12 items-center gap-2 rounded-xs border border-white/20 px-6 text-sm font-semibold text-white transition hover:bg-white/10'
             >
               <span className='flex h-6 w-6 items-center justify-center rounded-full border border-white/40'>
                 <Play className='h-3 w-3 fill-white text-white' />
