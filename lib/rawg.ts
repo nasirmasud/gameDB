@@ -124,15 +124,27 @@ export type MediaItem =
   | { type: "movie"; id: number; preview: string; videoUrl: string; name: string };
 
 export function getGenres() {
-  return rawgFetch<RawgListResponse<{ id: number; name: string; slug: string; games_count: number }>>(
-    "/genres"
-  );
+  return rawgFetch<
+    RawgListResponse<{
+      id: number;
+      name: string;
+      slug: string;
+      games_count: number;
+      image_background: string;
+    }>
+  >("/genres");
 }
 
 export function getPlatforms() {
-  return rawgFetch<RawgListResponse<{ id: number; name: string; slug: string; games_count: number }>>(
-    "/platforms"
-  );
+  return rawgFetch<
+    RawgListResponse<{
+      id: number;
+      name: string;
+      slug: string;
+      games_count: number;
+      image_background: string;
+    }>
+  >("/platforms");
 }
 
 // Convenience: games sorted by rating, for "Top Rated" / "Popular" home sections
