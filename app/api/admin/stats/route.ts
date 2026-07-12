@@ -61,9 +61,9 @@ export async function GET() {
     return NextResponse.json({
       totalUsers,
       totalGames,
+      totalCustomGames,
       totalReviews,
       totalRatings: totalReviews,
-      totalNews: 0,
       usersByRole,
       gamesByStatus,
     });

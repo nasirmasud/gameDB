@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
@@ -10,7 +10,6 @@ import {
   Users,
   LogOut,
   MessageSquare,
-  Newspaper,
   Star,
   UserPlus,
   Pencil,
@@ -27,9 +26,9 @@ import {
 interface AdminStats {
   totalUsers: number;
   totalGames: number;
+  totalCustomGames: number;
   totalReviews: number;
   totalRatings: number;
-  totalNews: number;
   usersByRole: Array<{ name: string; value: number; percentage: string; color: string }>;
   gamesByStatus: Array<{ name: string; value: number; percentage: string; color: string }>;
 }
@@ -49,7 +48,6 @@ interface ChartResponse {
   users: number[];
   games: number[];
   reviews: number[];
-  news: number[];
 }
 
 interface AdminDashboardProps {
@@ -72,7 +70,6 @@ function StatSkeleton() {
 
 export function AdminDashboard({ user }: AdminDashboardProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [gamesOpen, setGamesOpen] = useState(true);
   const [usersOpen, setUsersOpen] = useState(true);
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [activities, setActivities] = useState<AdminActivity["activities"]>([]);
@@ -81,28 +78,35 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
     users: [],
     games: [],
     reviews: [],
-    news: [],
   });
+  const [chartRange, setChartRange] = useState(6);
   const [loading, setLoading] = useState(true);
 
   const activityChartRef = useRef<HTMLCanvasElement>(null);
   const usersChartRef = useRef<HTMLCanvasElement>(null);
   const gamesChartRef = useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
-    Promise.all([
-      fetch("/api/admin/stats").then((r) => r.json()),
-      fetch("/api/admin/activity").then((r) => r.json()),
-      fetch("/api/admin/charts").then((r) => r.json()),
-    ])
-      .then(([s, a, c]: [AdminStats, AdminActivity, ChartResponse]) => {
-        setStats(s);
-        setActivities(a.activities ?? []);
-        setChartData(c);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+  const fetchData = useCallback(async (range: number) => {
+    setLoading(true);
+    try {
+      const [s, a, c] = await Promise.all([
+        fetch("/api/admin/stats").then((r) => r.json()),
+        fetch("/api/admin/activity").then((r) => r.json()),
+        fetch(`/api/admin/charts?range=${range}`).then((r) => r.json()),
+      ]);
+      setStats(s as AdminStats);
+      setActivities((a as AdminActivity).activities ?? []);
+      setChartData(c as ChartResponse);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchData(chartRange);
+  }, [fetchData, chartRange]);
 
   useEffect(() => {
     if (
@@ -147,14 +151,6 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                 data: chartData.reviews,
                 borderColor: "#3b82f6",
                 backgroundColor: "#3b82f6",
-                tension: 0.4,
-                pointRadius: 3,
-              },
-              {
-                label: "News",
-                data: chartData.news,
-                borderColor: "#f97316",
-                backgroundColor: "#f97316",
                 tension: 0.4,
                 pointRadius: 3,
               },
@@ -285,18 +281,18 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
       href: "/admin/dashboard/reviews",
     },
     {
-      label: "Total News",
-      value: stats?.totalNews ?? 0,
-      icon: Newspaper,
-      color: "bg-orange-600/30 text-orange-400",
-      href: "/news",
-    },
-    {
       label: "Total Ratings",
       value: stats?.totalRatings ?? 0,
       icon: Star,
       color: "bg-yellow-600/30 text-yellow-400",
       href: "/admin/dashboard/reviews",
+    },
+    {
+      label: "Custom Games",
+      value: stats?.totalCustomGames ?? 0,
+      icon: Gamepad2,
+      color: "bg-cyan-600/30 text-cyan-400",
+      href: "/admin/dashboard/custom-games",
     },
   ];
 
@@ -329,49 +325,6 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
           Dashboard
         </Link>
 
-        <div>
-          <button
-            onClick={() => setGamesOpen(!gamesOpen)}
-            className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 font-medium text-muted-foreground hover:bg-secondary"
-          >
-            <span className="flex items-center gap-3">
-              <Gamepad2 className="h-4 w-4" />
-              Games
-            </span>
-            <span className={`text-xs transition ${gamesOpen ? "rotate-180" : ""}`}>
-              <ChevronDown className="h-3.5 w-3.5" />
-            </span>
-          </button>
-          {gamesOpen && (
-            <div className="ml-8 mt-1 flex flex-col gap-0.5 text-sm text-muted-foreground">
-              <Link
-                href="#"
-                className="rounded-lg px-3 py-1.5 hover:bg-secondary hover:text-foreground"
-              >
-                All Games
-              </Link>
-              <Link
-                href="#"
-                className="rounded-lg px-3 py-1.5 hover:bg-secondary hover:text-foreground"
-              >
-                Add New Game
-              </Link>
-              <Link
-                href="/genres"
-                className="rounded-lg px-3 py-1.5 hover:bg-secondary hover:text-foreground"
-              >
-                Genres
-              </Link>
-              <Link
-                href="/platforms"
-                className="rounded-lg px-3 py-1.5 hover:bg-secondary hover:text-foreground"
-              >
-                Platforms
-              </Link>
-            </div>
-          )}
-        </div>
-
         <div className="mt-3">
           <button
             onClick={() => setUsersOpen(!usersOpen)}
@@ -388,13 +341,13 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
           {usersOpen && (
             <div className="ml-8 mt-1 flex flex-col gap-0.5 text-sm text-muted-foreground">
               <Link
-                href="#"
+                href="/admin/dashboard/users"
                 className="rounded-lg px-3 py-1.5 hover:bg-secondary hover:text-foreground"
               >
                 All Users
               </Link>
               <Link
-                href="#"
+                href="/admin/dashboard/roles"
                 className="rounded-lg px-3 py-1.5 hover:bg-secondary hover:text-foreground"
               >
                 Roles &amp; Permissions
@@ -402,6 +355,14 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
             </div>
           )}
         </div>
+
+        <Link
+          href="/admin/dashboard/custom-games"
+          className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:bg-secondary"
+        >
+          <Gamepad2 className="h-4 w-4" />
+          Custom Games
+        </Link>
 
         <div className="mt-3 border-t border-border pt-3">
           <button
@@ -450,9 +411,7 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
             return (
               <div
                 key={card.label}
-                className={`rounded-xl border border-border bg-card p-4 ${
-                  card.label === "Total Ratings" ? "col-span-2 md:col-span-1" : ""
-                }`}
+                className="rounded-xl border border-border bg-card p-4"
               >
                 <p className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
                   <span
@@ -477,14 +436,18 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-6">
           <div className="flex flex-col gap-6 min-w-0">
             <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
-                <h2 className="text-lg font-bold">Platform Activity Overview</h2>
-                <select className="rounded-lg border border-border bg-secondary px-3 py-1.5 text-sm focus:outline-none">
-                  <option>Last 6 Months</option>
-                  <option>Last 3 Months</option>
-                  <option>Last Year</option>
-                </select>
-              </div>
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="text-lg font-bold">Platform Activity Overview</h2>
+                  <select
+                    value={chartRange}
+                    onChange={(e) => setChartRange(Number(e.target.value))}
+                    className="rounded-lg border border-border bg-secondary px-3 py-1.5 text-sm focus:outline-none"
+                  >
+                    <option value={3}>Last 3 Months</option>
+                    <option value={6}>Last 6 Months</option>
+                    <option value={12}>Last Year</option>
+                  </select>
+                </div>
               <div className="mb-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-green-500" /> Users
@@ -494,9 +457,6 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-blue-500" /> Reviews
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-orange-500" /> News
                 </span>
               </div>
               <div className="h-72">
@@ -535,13 +495,18 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
               </div>
 
               <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
-                <h2 className="mb-4 text-lg font-bold">Games by Status</h2>
+                <Link
+                  href="/admin/dashboard/custom-games"
+                  className="mb-4 block text-lg font-bold hover:underline"
+                >
+                  Games by Status
+                </Link>
                 <div className="flex items-center gap-6">
                   <div className="relative h-32 w-32 shrink-0">
                     <canvas ref={gamesChartRef} />
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <p className="text-lg font-bold">
-                        {stats?.totalGames.toLocaleString() ?? "0"}
+                        {stats?.totalCustomGames.toLocaleString() ?? "0"}
                       </p>
                       <p className="text-[10px] text-muted-foreground">Total</p>
                     </div>
@@ -592,9 +557,12 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                   <p className="text-sm text-muted-foreground">No recent activity.</p>
                 )}
               </div>
-              <button className="mt-4 flex w-full items-center justify-center gap-1 rounded-lg border border-border py-2 text-sm transition hover:bg-secondary">
+              <Link
+                href="/admin/dashboard/activity"
+                className="mt-4 flex w-full items-center justify-center gap-1 rounded-lg border border-border py-2 text-sm transition hover:bg-secondary"
+              >
                 View All Activity <ChevronRight className="h-4 w-4" />
-              </button>
+              </Link>
             </div>
 
             <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
@@ -635,9 +603,12 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
                   </div>
                 </div>
               </div>
-              <button className="mt-5 flex w-full items-center justify-center gap-1 rounded-lg border border-border py-2 text-sm transition hover:bg-secondary">
+              <Link
+                href="/admin/dashboard/status"
+                className="mt-5 flex w-full items-center justify-center gap-1 rounded-lg border border-border py-2 text-sm transition hover:bg-secondary"
+              >
                 View System Status <ChevronRight className="h-4 w-4" />
-              </button>
+              </Link>
             </div>
           </div>
         </div>

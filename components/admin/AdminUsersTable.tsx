@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Trash2, ShieldCheck, Ban, User as UserIcon, Loader2, CheckCircle } from "lucide-react";
+import { Trash2, ShieldCheck, Ban, User as UserIcon, Loader2, CheckCircle, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { toast } from "sonner";
 
 interface UserRow {
@@ -20,10 +20,27 @@ interface AdminUsersTableProps {
   users: UserRow[];
 }
 
+const PAGE_SIZES = [10, 20, 50];
+
 export function AdminUsersTable({ users }: AdminUsersTableProps) {
   const router = useRouter();
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+
+  const filtered = useMemo(() => {
+    if (!search.trim()) return users;
+    const q = search.toLowerCase();
+    return users.filter(
+      (u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q),
+    );
+  }, [users, search]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const paged = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   const handleBanToggle = async (u: UserRow) => {
     setLoadingId(u._id);
@@ -77,6 +94,29 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
 
   return (
     <>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative max-w-xs">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search by name or email..."
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
+            className="w-full rounded-lg border border-border bg-card py-2 pl-10 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+        {filtered.length > 0 && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>
+              {filtered.length} of {users.length} users
+            </span>
+          </div>
+        )}
+      </div>
+
       <div className="overflow-x-auto rounded-xl border border-border bg-card">
         <table className="w-full text-sm">
           <thead>
@@ -92,7 +132,7 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => {
+            {paged.map((u) => {
               const isAdmin = u.role === "admin";
               const isLoading = loadingId === u._id;
               return (
@@ -179,19 +219,62 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                 </tr>
               );
             })}
-            {users.length === 0 && (
+            {paged.length === 0 && (
               <tr>
                 <td
                   colSpan={8}
                   className="px-4 py-8 text-center text-muted-foreground"
                 >
-                  No users found.
+                  {search ? "No users match your search." : "No users found."}
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      {filtered.length > 0 && (
+        <div className="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Rows per page:</span>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setPage(1);
+              }}
+              className="rounded border border-border bg-card px-2 py-1 text-sm focus:outline-none"
+            >
+              {PAGE_SIZES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              Page {safePage} of {totalPages}
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setPage(safePage - 1)}
+                disabled={safePage <= 1}
+                className="rounded-lg border border-border p-1.5 text-muted-foreground transition hover:bg-secondary disabled:opacity-30"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setPage(safePage + 1)}
+                disabled={safePage >= totalPages}
+                className="rounded-lg border border-border p-1.5 text-muted-foreground transition hover:bg-secondary disabled:opacity-30"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {confirmDeleteId && confirmUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60">

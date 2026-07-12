@@ -17,7 +17,7 @@ function timeAgo(date: Date): string {
   return new Date(date).toLocaleDateString();
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await auth();
   if (!session?.user || session.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -26,9 +26,15 @@ export async function GET() {
   try {
     await connectDB();
 
+    const { searchParams } = new URL(req.url);
+    const limit = parseInt(searchParams.get("limit") ?? "5", 10);
+
+    const reviewLimit = Math.min(Math.max(limit, 1), 100);
+    const userLimit = Math.ceil(reviewLimit / 2);
+
     const [recentReviews, recentUsers] = await Promise.all([
-      Review.find().sort({ createdAt: -1 }).limit(5).lean(),
-      User.find().sort({ createdAt: -1 }).limit(3).lean(),
+      Review.find().sort({ createdAt: -1 }).limit(reviewLimit).lean(),
+      User.find().sort({ createdAt: -1 }).limit(userLimit).lean(),
     ]);
 
     const all: Array<{
@@ -64,7 +70,7 @@ export async function GET() {
 
     all.sort((a, b) => b.sortKey - a.sortKey);
 
-    const activities = all.slice(0, 5).map(({ icon, color, title, subtitle, time }) => ({
+    const activities = all.slice(0, limit).map(({ icon, color, title, subtitle, time }) => ({
       icon,
       color,
       title,
