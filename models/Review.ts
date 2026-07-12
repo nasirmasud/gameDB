@@ -1,14 +1,17 @@
 import { Schema, models, model, Types } from "mongoose";
 
+export type ReviewStatus = "approved" | "pending" | "rejected";
+
 export interface IReview {
   _id: string;
-  gameId: number; // RAWG game id (external)
-  gameName: string; // snapshot, avoids re-fetching RAWG just to show title
+  gameId: number;
+  gameName: string;
   gameImage?: string;
-  user: Types.ObjectId; // ref User
-  userName: string; // snapshot for fast display without populate
-  rating: number; // 1-5
+  user: Types.ObjectId;
+  userName: string;
+  rating: number;
   comment: string;
+  status: ReviewStatus;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,6 +25,7 @@ const ReviewSchema = new Schema<IReview>(
     userName: { type: String, required: true },
     rating: { type: Number, required: true, min: 1, max: 5 },
     comment: { type: String, required: true, trim: true, maxlength: 1000 },
+    status: { type: String, enum: ["approved", "pending", "rejected"], default: "pending" },
   },
   { timestamps: true }
 );

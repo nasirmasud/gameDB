@@ -1,5 +1,7 @@
 import { Schema, models, model, Types } from "mongoose";
 
+export type GameStatus = "published" | "draft" | "pending" | "archived";
+
 export interface ICustomGame {
   _id: string;
   title: string;
@@ -8,7 +10,8 @@ export interface ICustomGame {
   releaseDate: Date;
   genre: string;
   imageUrl?: string;
-  submittedBy: Types.ObjectId; // ref User
+  submittedBy: Types.ObjectId;
+  status: GameStatus;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -22,6 +25,7 @@ const CustomGameSchema = new Schema<ICustomGame>(
     genre: { type: String, required: true },
     imageUrl: { type: String },
     submittedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    status: { type: String, enum: ["published", "draft", "pending", "archived"], default: "draft" },
   },
   { timestamps: true }
 );

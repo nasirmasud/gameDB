@@ -45,6 +45,9 @@ export async function Navbar() {
               {link.label}
             </NavLink>
           ))}
+          {user && (
+            <NavLink href='/user/dashboard'>Dashboard</NavLink>
+          )}
         </nav>
 
         {/* Auth area */}

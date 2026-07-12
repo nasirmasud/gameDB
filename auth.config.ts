@@ -1,26 +1,43 @@
 import type { NextAuthConfig } from "next-auth";
 
-/**
- * This config is split out from auth.ts because middleware runs on the
- * Edge runtime, which cannot use mongoose/bcrypt. Keep this file free of
- * any Node-only imports.
- */
 export const authConfig: NextAuthConfig = {
   pages: {
     signIn: "/login",
   },
   session: {
     strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60, // 7 days
   },
   callbacks: {
     authorized({ auth, request }) {
       const isLoggedIn = !!auth?.user;
       const { pathname } = request.nextUrl;
 
-      const protectedPaths = ["/items/add", "/items/manage", "/wishlist", "/admin"];
+      if (isLoggedIn && auth?.user?.isBanned) {
+        const publicPaths = [
+          "/",
+          "/explore",
+          "/games",
+          "/genres",
+          "/platforms",
+          "/news",
+          "/login",
+          "/register",
+        ];
+        const isPublic = publicPaths.some((p) => {
+          if (p === "/") return pathname === "/";
+          return pathname.startsWith(p);
+        });
+        if (!isPublic) {
+          return Response.redirect(new URL("/", request.nextUrl));
+        }
+        return true;
+      }
+
+      const protectedPaths = ["/items/add", "/items/manage", "/wishlist", "/user/dashboard"];
       const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
 
-      const isAdminPath = pathname.startsWith("/admin");
+      const isAdminPath = pathname.startsWith("/admin/dashboard");
       if (isAdminPath) {
         return isLoggedIn && auth?.user?.role === "admin";
       }
@@ -31,11 +48,11 @@ export const authConfig: NextAuthConfig = {
 
       return true;
     },
-    // Carries role/id from token into the session on every request
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.role = (user as { role?: string }).role ?? "user";
+        token.isBanned = (user as { isBanned?: boolean }).isBanned ?? false;
       }
       return token;
     },
@@ -43,9 +60,10 @@ export const authConfig: NextAuthConfig = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as "user" | "admin";
+        session.user.isBanned = token.isBanned as boolean;
       }
       return session;
     },
   },
-  providers: [], // actual providers are added in auth.ts (Node runtime)
+  providers: [],
 };

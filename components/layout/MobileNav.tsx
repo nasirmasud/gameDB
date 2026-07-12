@@ -82,6 +82,13 @@ export function MobileNav({ user }: MobileNavProps) {
           {user ? (
             <>
               <Link
+                href='/user/dashboard'
+                onClick={() => setOpen(false)}
+                className='flex items-center gap-2 py-2 px-3 rounded-md text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
+              >
+                <LayoutGrid className='h-4 w-4' /> Dashboard
+              </Link>
+              <Link
                 href='/wishlist'
                 onClick={() => setOpen(false)}
                 className='flex items-center gap-2 py-2 px-3 rounded-md text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
@@ -104,7 +111,7 @@ export function MobileNav({ user }: MobileNavProps) {
               </Link>
               {user.role === "admin" && (
                 <Link
-                  href='/admin'
+                  href='/admin/dashboard'
                   onClick={() => setOpen(false)}
                   className='flex items-center gap-2 py-2 px-3 rounded-md text-sm font-medium text-muted-foreground hover:bg-secondary/60 hover:text-foreground'
                 >
