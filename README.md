@@ -308,25 +308,25 @@ Login / Register
 
 ## User Roles & Permissions
 
-| Feature | User | Admin |
-| :------ | :-: | :---: |
-| Browse Game Catalog | ✅ | ✅ |
-| View Game Details | ✅ | ✅ |
-| Search & Filter Games | ✅ | ✅ |
-| Submit Reviews | ✅ | ✅ |
-| Manage Own Reviews | ✅ | ✅ |
-| Add to Wishlist | ✅ | ✅ |
-| Manage Own Wishlist | ✅ | ✅ |
-| Submit Custom Games | ✅ | ✅ |
-| Manage Own Custom Games | ✅ | ✅ |
-| View Own Dashboard & Analytics | ✅ | ✅ |
-| Moderate All Reviews | ❌ | ✅ |
-| Moderate All Custom Games | ❌ | ✅ |
-| Manage All Users (Ban/Delete) | ❌ | ✅ |
-| View Platform Analytics | ❌ | ✅ |
-| View Platform Activity Feed | ❌ | ✅ |
-| System Status Monitoring | ❌ | ✅ |
-| Delete Own Account | ✅ | ✅ |
+| Feature | Visitor | User | Admin |
+| :------ | :-----: | :-: | :---: |
+| Browse Game Catalog | ✅ | ✅ | ✅ |
+| View Game Details | ✅ | ✅ | ✅ |
+| Search & Filter Games | ✅ | ✅ | ✅ |
+| Submit Reviews | ❌ | ✅ | ✅ |
+| Manage Own Reviews | ❌ | ✅ | ✅ |
+| Add to Wishlist | ❌ | ✅ | ✅ |
+| Manage Own Wishlist | ❌ | ✅ | ✅ |
+| Submit Custom Games | ❌ | ✅ | ✅ |
+| Manage Own Custom Games | ❌ | ✅ | ✅ |
+| View Own Dashboard & Analytics | ❌ | ✅ | ✅ |
+| Moderate All Reviews | ❌ | ❌ | ✅ |
+| Moderate All Custom Games | ❌ | ❌ | ✅ |
+| Manage All Users (Ban/Delete) | ❌ | ❌ | ✅ |
+| View Platform Analytics | ❌ | ❌ | ✅ |
+| View Platform Activity Feed | ❌ | ❌ | ✅ |
+| System Status Monitoring | ❌ | ❌ | ✅ |
+| Delete Own Account | ❌ | ✅ | ✅ |
 
 ---
 
