@@ -76,6 +76,7 @@
 gamedb/
 ├── app/                              # Next.js App Router
 │   ├── page.tsx                      # Home page (hero + popular/new/upcoming/top sections)
+│   ├── not-found.tsx                 # Custom 404 page
 │   ├── layout.tsx                    # Root layout (Navbar, Footer, providers)
 │   ├── globals.css                   # Global styles + Tailwind v4 theme
 │   │
@@ -108,6 +109,7 @@ gamedb/
 │   ├── platforms/                    # Platform listing
 │   ├── news/                         # Recent releases as news articles
 │   ├── about/                        # About page
+│   ├── community/                    # Community custom games listing
 │   ├── contact/                      # Contact form
 │   ├── login/                        # Authentication
 │   ├── register/                     # User registration
