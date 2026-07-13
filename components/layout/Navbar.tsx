@@ -53,7 +53,7 @@ export async function Navbar() {
         </nav>
 
         {/* Auth area */}
-        <div className='flex items-center gap-3 lg:ml-2'>
+        <div className='flex items-center gap-3 ml-auto'>
           <ThemeToggle />
 
           {user ? (

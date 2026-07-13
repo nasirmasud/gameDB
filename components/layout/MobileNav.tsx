@@ -49,7 +49,7 @@ export function MobileNav({ user }: MobileNavProps) {
         <Button
           variant='ghost'
           size='icon'
-          className='md:hidden'
+          className='lg:hidden'
           aria-label='Open menu'
         >
           <Menu className='h-5 w-5' />

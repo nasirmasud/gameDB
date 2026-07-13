@@ -9,13 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Heart,
-  LayoutGrid,
-  LogOut,
-  PlusCircle,
-  ShieldCheck,
-} from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 
@@ -59,34 +53,11 @@ export function UserMenu({ user }: UserMenuProps) {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link href='/wishlist' className='cursor-pointer'>
-            <Heart className='mr-2 h-4 w-4' />
-            Wishlist
+          <Link href='/user/dashboard/profile' className='cursor-pointer'>
+            <User className='mr-2 h-4 w-4' />
+            Profile
           </Link>
         </DropdownMenuItem>
-
-        <DropdownMenuItem asChild>
-          <Link href='/items/manage' className='cursor-pointer'>
-            <LayoutGrid className='mr-2 h-4 w-4' />
-            Manage Items
-          </Link>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem asChild>
-          <Link href='/items/add' className='cursor-pointer'>
-            <PlusCircle className='mr-2 h-4 w-4' />
-            Add Item
-          </Link>
-        </DropdownMenuItem>
-
-        {user.role === "admin" && (
-          <DropdownMenuItem asChild>
-            <Link href='/admin/dashboard' className='cursor-pointer'>
-              <ShieldCheck className='mr-2 h-4 w-4' />
-              Admin Panel
-            </Link>
-          </DropdownMenuItem>
-        )}
 
         <DropdownMenuSeparator />
 
