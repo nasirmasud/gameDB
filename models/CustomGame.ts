@@ -11,6 +11,9 @@ export interface ICustomGame {
   genre: string;
   developer?: string;
   publisher?: string;
+  platforms?: string[];
+  screenshots?: string[];
+  tags?: string[];
   imageUrl?: string;
   submittedBy: Types.ObjectId;
   status: GameStatus;
@@ -27,6 +30,9 @@ const CustomGameSchema = new Schema<ICustomGame>(
     genre: { type: String, required: true },
     developer: { type: String, trim: true },
     publisher: { type: String, trim: true },
+    platforms: [{ type: String }],
+    screenshots: [{ type: String }],
+    tags: [{ type: String }],
     imageUrl: { type: String },
     submittedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     status: { type: String, enum: ["published", "draft", "pending", "archived"], default: "draft" },

@@ -13,7 +13,9 @@ export async function POST(req: Request) {
     await connectDB();
 
     const body = await req.json();
-    const { title, shortDescription, fullDescription, releaseDate, genre, developer, publisher, imageUrl } = body;
+    console.log("CREATE body:", JSON.stringify(body, null, 2));
+
+    const { title, shortDescription, fullDescription, releaseDate, genre, developer, publisher, platforms, screenshots, tags, imageUrl } = body;
 
     if (!title?.trim() || !shortDescription?.trim() || !fullDescription?.trim() || !releaseDate || !genre?.trim()) {
       return NextResponse.json({ error: "Title, short description, full description, release date, and genre are required." }, { status: 400 });
@@ -35,11 +37,14 @@ export async function POST(req: Request) {
       fullDescription: fullDescription.trim(),
       releaseDate: new Date(releaseDate),
       genre: genre.trim(),
-      developer: developer?.trim() || undefined,
-      publisher: publisher?.trim() || undefined,
-      imageUrl: imageUrl?.trim() || undefined,
+      developer: developer?.trim() || null,
+      publisher: publisher?.trim() || null,
+      platforms: Array.isArray(platforms) ? platforms.filter(Boolean) : [],
+      screenshots: Array.isArray(screenshots) ? screenshots.filter(Boolean) : [],
+      tags: Array.isArray(tags) ? tags.filter(Boolean) : [],
+      imageUrl: imageUrl?.trim() || null,
       submittedBy: session.user.id,
-      status: "draft",
+      status: "pending",
     });
 
     return NextResponse.json({
@@ -47,6 +52,9 @@ export async function POST(req: Request) {
       title: game.title,
       shortDescription: game.shortDescription,
       genre: game.genre,
+      platforms: game.platforms ?? [],
+      screenshots: game.screenshots ?? [],
+      tags: game.tags ?? [],
       status: game.status,
       createdAt: game.createdAt.toISOString(),
     });
