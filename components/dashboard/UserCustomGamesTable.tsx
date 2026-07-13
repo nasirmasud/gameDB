@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, Plus, ChevronLeft, ChevronRight, Trash2, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { AddCustomGameModal } from "./AddCustomGameModal";
 
 interface CustomGameRow {
@@ -24,14 +25,32 @@ const STATUS_BADGE: Record<string, string> = {
 };
 
 export function UserCustomGamesTable({ games: initialGames }: { games: CustomGameRow[] }) {
+  const [games, setGames] = useState(initialGames);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [showModal, setShowModal] = useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  async function handleDelete(id: string) {
+    setDeleting(id);
+    try {
+      const res = await fetch(`/api/user/custom-games/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      setGames((prev) => prev.filter((g) => g._id !== id));
+      toast.success("Game deleted.");
+    } catch {
+      toast.error("Failed to delete game.");
+    } finally {
+      setDeleting(null);
+      setConfirmDeleteId(null);
+    }
+  }
 
   const filtered = useMemo(() => {
-    let result = initialGames;
+    let result = games;
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter((g) => g.title.toLowerCase().includes(q) || g.genre.toLowerCase().includes(q));
@@ -40,7 +59,7 @@ export function UserCustomGamesTable({ games: initialGames }: { games: CustomGam
       result = result.filter((g) => g.status === statusFilter);
     }
     return result;
-  }, [initialGames, search, statusFilter]);
+  }, [games, search, statusFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, totalPages);
@@ -75,18 +94,19 @@ export function UserCustomGamesTable({ games: initialGames }: { games: CustomGam
           <Plus className="h-4 w-4" /> Add Game
         </button>
         {filtered.length > 0 && (
-          <span className="text-sm text-muted-foreground">{filtered.length} of {initialGames.length} games</span>
+          <span className="text-sm text-muted-foreground">{filtered.length} of {games.length} games</span>
         )}
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-border bg-card">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm table-fixed">
           <thead>
             <tr className="border-b border-border text-muted-foreground">
-              <th className="px-4 py-3 text-left font-medium">Title</th>
-              <th className="px-4 py-3 text-left font-medium">Genre</th>
-              <th className="px-4 py-3 text-center font-medium">Status</th>
-              <th className="px-4 py-3 text-left font-medium">Date</th>
+              <th className="w-[40%] px-4 py-3 text-left font-medium">Title</th>
+              <th className="w-[20%] px-4 py-3 text-left font-medium">Genre</th>
+              <th className="w-[15%] px-4 py-3 text-center font-medium">Status</th>
+              <th className="w-[15%] px-4 py-3 text-left font-medium">Date</th>
+              <th className="w-[10%] px-4 py-3 text-center font-medium">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -105,11 +125,20 @@ export function UserCustomGamesTable({ games: initialGames }: { games: CustomGam
                 <td className="whitespace-nowrap px-4 py-3 text-muted-foreground">
                   {new Date(g.createdAt).toLocaleDateString()}
                 </td>
+                <td className="px-4 py-3 text-center">
+                  <button
+                    onClick={() => setConfirmDeleteId(g._id)}
+                    disabled={deleting === g._id}
+                    className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs text-red-400 transition hover:bg-red-600/20 disabled:opacity-50"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </td>
               </tr>
             ))}
             {paged.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
                   {search || statusFilter !== "all" ? "No games match your filters." : "No custom game submissions yet."}
                 </td>
               </tr>
@@ -154,6 +183,37 @@ export function UserCustomGamesTable({ games: initialGames }: { games: CustomGam
             window.location.reload();
           }}
         />
+      )}
+
+      {confirmDeleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60">
+          <div className="mx-4 w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-lg">
+            <h3 className="mb-2 text-lg font-bold">Delete Custom Game</h3>
+            <p className="mb-5 text-sm text-muted-foreground">
+              Are you sure you want to delete this custom game? This action cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                disabled={deleting === confirmDeleteId}
+                className="rounded-lg border border-border px-4 py-2 text-sm transition hover:bg-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(confirmDeleteId)}
+                disabled={deleting === confirmDeleteId}
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+              >
+                {deleting === confirmDeleteId ? (
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Deleting...</>
+                ) : (
+                  <><Trash2 className="h-4 w-4" /> Delete</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </>
   );

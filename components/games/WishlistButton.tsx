@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ interface WishlistButtonProps {
 export function WishlistButton({ gameId, gameName, gameImage, gameRating }: WishlistButtonProps) {
   const { data: session } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const [isFavorited, setIsFavorited] = useState(false);
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -37,7 +38,7 @@ export function WishlistButton({ gameId, gameName, gameImage, gameRating }: Wish
 
   async function handleToggle() {
     if (!session?.user?.id) {
-      router.push("/login");
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
       return;
     }
 

@@ -2,7 +2,13 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 import { Gamepad2 } from "lucide-react";
 import Link from "next/link";
 
-export default function RegisterPage() {
+interface Props {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function RegisterPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const callbackUrl = typeof params.callbackUrl === "string" ? params.callbackUrl : "";
   return (
     <div className='flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12'>
       <div className='w-full max-w-sm rounded-2xl border border-border bg-card p-8 shadow-sm'>
@@ -18,7 +24,7 @@ export default function RegisterPage() {
           Join GameDB to save favorites and write reviews.
         </p>
 
-        <RegisterForm />
+        <RegisterForm callbackUrl={callbackUrl} />
       </div>
     </div>
   );

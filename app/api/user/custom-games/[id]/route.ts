@@ -4,6 +4,42 @@ import { auth } from "@/auth";
 import { connectDB } from "@/lib/mongodb";
 import CustomGame from "@/models/CustomGame";
 
+export async function DELETE(
+  _req: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+
+  try {
+    await connectDB();
+
+    const game = await CustomGame.findById(id);
+    if (!game) {
+      return NextResponse.json({ error: "Custom game not found." }, { status: 404 });
+    }
+
+    const isAdmin = session.user.role === "admin";
+    const isOwner = game.submittedBy.toString() === session.user.id;
+    if (!isAdmin && !isOwner) {
+      return NextResponse.json({ error: "Not authorized to delete this game." }, { status: 403 });
+    }
+
+    await CustomGame.findByIdAndDelete(id);
+
+    revalidatePath("/user/dashboard", "layout");
+
+    return NextResponse.json({ message: "Custom game deleted." });
+  } catch (error) {
+    console.error("Delete custom game error:", error);
+    return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
+  }
+}
+
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> },

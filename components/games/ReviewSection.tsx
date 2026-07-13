@@ -3,6 +3,7 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ReviewItem {
@@ -21,6 +22,7 @@ interface Props {
 
 export function ReviewSection({ gameId, gameName, gameImage }: Props) {
   const { data: session } = useSession();
+  const pathname = usePathname();
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -157,7 +159,7 @@ export function ReviewSection({ gameId, gameName, gameImage }: Props) {
         </form>
       ) : (
         <div className='mb-6 rounded-xs border border-border bg-card p-4 text-center text-sm text-muted-foreground'>
-          <a href='/login' className='text-primary hover:underline'>
+          <a href={`/login?callbackUrl=${encodeURIComponent(pathname)}`} className='text-primary hover:underline'>
             Log in
           </a>{" "}
           to leave a review.

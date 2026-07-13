@@ -5,12 +5,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export function RegisterForm() {
+interface Props {
+  callbackUrl?: string;
+}
+
+export function RegisterForm({ callbackUrl: propCallbackUrl }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = propCallbackUrl || searchParams.get("callbackUrl") || "";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,12 +62,14 @@ export function RegisterForm() {
 
       if (signInResult?.error) {
         toast.success("Account created! Please log in.");
-        router.push("/login");
+        const loginUrl = callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/login";
+        router.push(loginUrl);
         return;
       }
 
       toast.success("Account created successfully!");
-      router.push("/");
+      router.push(callbackUrl || "/");
+      router.refresh();
       router.refresh();
     } catch {
       toast.error("Something went wrong. Please try again.");
@@ -128,7 +136,7 @@ export function RegisterForm() {
       <p className='text-center text-sm text-muted-foreground'>
         Already have an account?{" "}
         <Link
-          href='/login'
+          href={callbackUrl ? `/login?callbackUrl=${encodeURIComponent(callbackUrl)}` : '/login'}
           className='font-medium text-primary hover:underline'
         >
           Log in

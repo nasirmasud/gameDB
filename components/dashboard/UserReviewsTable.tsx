@@ -2,7 +2,8 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { Star, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, Search, ChevronLeft, ChevronRight, Trash2, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface ReviewRow {
   _id: string;
@@ -28,13 +29,32 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export function UserReviewsTable({ reviews: initialReviews }: { reviews: ReviewRow[] }) {
+  const [reviews, setReviews] = useState(initialReviews);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  async function handleDelete(id: string) {
+    setDeleting(id);
+    try {
+      const res = await fetch(`/api/user/reviews/${id}`, { method: "DELETE" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || "Failed to delete review.");
+      setReviews((prev) => prev.filter((r) => r._id !== id));
+      toast.success("Review deleted.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete review.");
+    } finally {
+      setDeleting(null);
+      setConfirmDeleteId(null);
+    }
+  }
 
   const filtered = useMemo(() => {
-    let result = initialReviews;
+    let result = reviews;
     if (search.trim()) {
       const q = search.toLowerCase();
       result = result.filter(
@@ -47,7 +67,7 @@ export function UserReviewsTable({ reviews: initialReviews }: { reviews: ReviewR
       result = result.filter((r) => r.status === statusFilter);
     }
     return result;
-  }, [initialReviews, search, statusFilter]);
+  }, [reviews, search, statusFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, totalPages);
@@ -81,22 +101,23 @@ export function UserReviewsTable({ reviews: initialReviews }: { reviews: ReviewR
         </div>
         {filtered.length > 0 && (
           <span className="text-sm text-muted-foreground">
-            {filtered.length} of {initialReviews.length} reviews
+            {filtered.length} of {reviews.length} reviews
           </span>
         )}
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-border bg-card">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm table-fixed">
           <thead>
             <tr className="border-b border-border text-muted-foreground">
-              <th className="w-[18%] px-2 py-3 text-left font-medium">Game</th>
-              <th className="w-[15%] px-2 py-3 text-left font-medium">Genre</th>
-              <th className="w-[18%] px-2 py-3 text-left font-medium">Platforms</th>
-              <th className="w-[15%] px-2 py-3 text-left font-medium">Publisher</th>
+              <th className="w-[20%] px-2 py-3 text-left font-medium">Game</th>
+              <th className="w-[14%] px-2 py-3 text-left font-medium">Genre</th>
+              <th className="w-[16%] px-2 py-3 text-left font-medium">Platforms</th>
+              <th className="w-[14%] px-2 py-3 text-left font-medium">Publisher</th>
               <th className="w-[10%] px-2 py-3 text-center font-medium">Rating</th>
-              <th className="w-[8%] px-2 py-3 text-center font-medium">Status</th>
-              <th className="w-[8%] px-2 py-3 text-left font-medium">Date</th>
+              <th className="w-[10%] px-2 py-3 text-center font-medium">Status</th>
+              <th className="w-[10%] px-2 py-3 text-left font-medium">Date</th>
+              <th className="w-[6%] px-2 py-3 text-center font-medium">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -130,11 +151,20 @@ export function UserReviewsTable({ reviews: initialReviews }: { reviews: ReviewR
                 <td className="whitespace-nowrap px-2 py-3 text-muted-foreground">
                   {new Date(r.createdAt).toLocaleDateString()}
                 </td>
+                <td className="px-2 py-3 text-center">
+                  <button
+                    onClick={() => setConfirmDeleteId(r._id)}
+                    disabled={deleting === r._id}
+                    className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs text-red-400 transition hover:bg-red-600/20 disabled:opacity-50"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </td>
               </tr>
             ))}
             {paged.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
                   {search || statusFilter !== "all" ? "No reviews match your filters." : "No reviews yet."}
                 </td>
               </tr>
@@ -165,6 +195,37 @@ export function UserReviewsTable({ reviews: initialReviews }: { reviews: ReviewR
               <button onClick={() => setPage(safePage + 1)} disabled={safePage >= totalPages}
                 className="rounded-lg border border-border p-1.5 text-muted-foreground transition hover:bg-secondary disabled:opacity-30">
                 <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDeleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/60">
+          <div className="mx-4 w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-lg">
+            <h3 className="mb-2 text-lg font-bold">Delete Review</h3>
+            <p className="mb-5 text-sm text-muted-foreground">
+              Are you sure you want to delete this review? This action cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3">
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                disabled={deleting === confirmDeleteId}
+                className="rounded-lg border border-border px-4 py-2 text-sm transition hover:bg-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(confirmDeleteId)}
+                disabled={deleting === confirmDeleteId}
+                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+              >
+                {deleting === confirmDeleteId ? (
+                  <><Loader2 className="h-4 w-4 animate-spin" /> Deleting...</>
+                ) : (
+                  <><Trash2 className="h-4 w-4" /> Delete</>
+                )}
               </button>
             </div>
           </div>

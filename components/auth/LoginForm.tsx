@@ -15,7 +15,7 @@ interface Props {
 
 function getDefaultRedirect(role?: string) {
   if (role === "admin") return "/admin/dashboard";
-  return "/user/dashboard";
+  return "/";
 }
 
 export function LoginForm({ callbackUrl: propCallbackUrl }: Props) {
@@ -28,10 +28,20 @@ export function LoginForm({ callbackUrl: propCallbackUrl }: Props) {
   const [isLoading, setIsLoading] = useState(false);
   const [quickLoading, setQuickLoading] = useState<string | null>(null);
 
-  async function getRedirectPath() {
-    const res = await fetch("/api/auth/session");
-    const session = await res.json();
-    return callbackUrl || getDefaultRedirect(session?.user?.role);
+  async function getRedirectPath(knownRole?: string) {
+    if (callbackUrl) return callbackUrl;
+
+    if (knownRole) return getDefaultRedirect(knownRole);
+
+    for (let i = 0; i < 3; i++) {
+      const res = await fetch("/api/auth/session");
+      const session = await res.json();
+      if (session?.user?.role) {
+        return getDefaultRedirect(session.user.role);
+      }
+      if (i < 2) await new Promise((r) => setTimeout(r, 300));
+    }
+    return "/";
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -67,7 +77,7 @@ export function LoginForm({ callbackUrl: propCallbackUrl }: Props) {
     }
 
     toast.success(`Logged in as ${label}!`);
-    router.push(await getRedirectPath());
+    router.push(await getRedirectPath(label === "Admin" ? "admin" : "user"));
     router.refresh();
   };
 
@@ -135,7 +145,7 @@ export function LoginForm({ callbackUrl: propCallbackUrl }: Props) {
       <p className='text-center text-sm text-muted-foreground'>
         Don&apos;t have an account?{" "}
         <Link
-          href='/register'
+          href={callbackUrl ? `/register?callbackUrl=${encodeURIComponent(callbackUrl)}` : '/register'}
           className='font-medium text-primary hover:underline'
         >
           Sign up
