@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectDB } from "@/lib/mongodb";
@@ -51,6 +52,8 @@ export async function PATCH(
     });
 
     const updated = await CustomGame.findByIdAndUpdate(id, update, { new: true, runValidators: true }).lean();
+
+    revalidatePath("/user/dashboard", "layout");
 
     return NextResponse.json({
       _id: updated._id.toString(),

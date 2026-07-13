@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectDB } from "@/lib/mongodb";
@@ -80,6 +81,8 @@ export async function POST(req: Request) {
       user: session.user.id,
     });
 
+    revalidatePath("/user/dashboard", "layout");
+
     return NextResponse.json({
       favorite: {
         _id: favorite._id.toString(),
@@ -113,6 +116,8 @@ export async function DELETE(req: Request) {
     }
 
     const deleted = await Favorite.findOneAndDelete({ gameId: parseInt(gameId, 10), user: session.user.id });
+
+    revalidatePath("/user/dashboard", "layout");
 
     if (!deleted) {
       return NextResponse.json({ error: "Favorite not found." }, { status: 404 });

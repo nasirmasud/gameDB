@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectDB } from "@/lib/mongodb";
@@ -82,6 +83,8 @@ export async function PATCH(req: Request) {
     }
 
     await User.findByIdAndUpdate(session.user.id, updateData);
+
+    revalidatePath("/user/dashboard", "layout");
 
     return NextResponse.json({ message: "Profile updated successfully." });
   } catch (error) {

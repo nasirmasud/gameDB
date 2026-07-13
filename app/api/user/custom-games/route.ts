@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectDB } from "@/lib/mongodb";
@@ -46,6 +47,8 @@ export async function POST(req: Request) {
       submittedBy: session.user.id,
       status: "pending",
     });
+
+    revalidatePath("/user/dashboard", "layout");
 
     return NextResponse.json({
       _id: game._id.toString(),

@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectDB } from "@/lib/mongodb";
@@ -95,6 +96,8 @@ export async function POST(
       comment: comment.trim(),
       status: "approved",
     });
+
+    revalidatePath("/user/dashboard", "layout");
 
     return NextResponse.json({
       _id: review._id.toString(),
