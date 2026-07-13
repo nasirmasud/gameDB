@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
@@ -167,10 +168,10 @@ export function ReviewSection({ gameId, gameName, gameImage }: Props) {
       {loading ? (
         <div className='space-y-3'>
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className='animate-pulse rounded-xs border border-border bg-card p-4'>
-              <div className='mb-2 h-4 w-24 rounded bg-secondary' />
-              <div className='mb-2 h-3 w-16 rounded bg-secondary' />
-              <div className='h-8 w-full rounded bg-secondary' />
+            <div key={i} className='rounded-xs border border-border bg-card p-4'>
+              <Skeleton className='mb-2 h-4 w-24' />
+              <Skeleton className='mb-2 h-3 w-16' />
+              <Skeleton className='h-8 w-full' />
             </div>
           ))}
         </div>

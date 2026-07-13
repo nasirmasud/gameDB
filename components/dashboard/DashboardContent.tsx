@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import Link from "next/link";
@@ -561,11 +562,11 @@ export function DashboardContent({ user }: DashboardContentProps) {
                       );
                     })
                   : Array.from({ length: 3 }).map((_, i) => (
-                      <div key={i} className="flex animate-pulse items-start gap-3">
-                        <div className="h-8 w-8 shrink-0 rounded-lg bg-secondary" />
+                      <div key={i} className="flex items-start gap-3">
+                        <Skeleton className="h-8 w-8 shrink-0" />
                         <div className="flex-1">
-                          <div className="mb-1 h-4 w-32 rounded bg-secondary" />
-                          <div className="h-3 w-48 rounded bg-secondary" />
+                          <Skeleton className="mb-1 h-4 w-32" />
+                          <Skeleton className="h-3 w-48" />
                         </div>
                       </div>
                     ))}

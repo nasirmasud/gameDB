@@ -2,6 +2,7 @@
 
 import { ArrowRight, Play, Star } from "lucide-react";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import { FaPlaystation, FaXbox } from "react-icons/fa6";
 import { SiSteam } from "react-icons/si";
@@ -160,9 +161,7 @@ function HeroSlide({ game }: { game: HeroGame }) {
 // ─── Loading / Error states ───────────────────────────────────────────────
 
 function HeroSkeleton() {
-  return (
-    <div className='h-[65vh] min-h-[440px] w-full animate-pulse bg-[#0a0e1a] sm:h-[75vh]' />
-  );
+  return <Skeleton className='h-[65vh] min-h-[440px] w-full rounded-none sm:h-[75vh]' />;
 }
 
 // ─── Main Slider ──────────────────────────────────────────────────────────

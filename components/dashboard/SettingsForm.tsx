@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Monitor, Moon, Sun } from "lucide-react";
@@ -29,8 +30,8 @@ export function SettingsForm() {
   if (!mounted) {
     return (
       <div className="space-y-6">
-        <div className="h-32 animate-pulse rounded-lg bg-secondary" />
-        <div className="h-24 animate-pulse rounded-lg bg-secondary" />
+        <Skeleton className="h-32" />
+        <Skeleton className="h-24" />
       </div>
     );
   }

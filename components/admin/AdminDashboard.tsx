@@ -1,5 +1,6 @@
 "use client";
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 import Link from "next/link";
@@ -60,10 +61,10 @@ interface AdminDashboardProps {
 
 function StatSkeleton() {
   return (
-    <div className="rounded-xl border border-border bg-card p-4 animate-pulse">
-      <div className="mb-3 h-7 w-28 rounded-lg bg-secondary" />
-      <div className="mb-1 h-8 w-20 rounded bg-secondary" />
-      <div className="mt-2 h-4 w-16 rounded bg-secondary" />
+    <div className="rounded-xl border border-border bg-card p-4">
+      <Skeleton className="mb-3 h-7 w-28" />
+      <Skeleton className="mb-1 h-8 w-20" />
+      <Skeleton className="mt-2 h-4 w-16" />
     </div>
   );
 }
@@ -236,23 +237,23 @@ export function AdminDashboard({ user }: AdminDashboardProps) {
     return (
       <div className="flex min-h-screen w-full">
         <aside className="hidden w-64 shrink-0 border-r border-border bg-card p-5 lg:flex flex-col gap-1">
-          <div className="mb-3 h-10 animate-pulse rounded-lg bg-secondary" />
+          <Skeleton className="mb-3 h-10" />
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-9 animate-pulse rounded-lg bg-secondary" />
+            <Skeleton key={i} className="h-9" />
           ))}
-          <div className="mt-auto h-40 animate-pulse rounded-xl bg-secondary" />
+          <Skeleton className="mt-auto h-40" />
         </aside>
         <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">
           <div className="mb-6">
-            <div className="mb-2 h-8 w-72 animate-pulse rounded bg-secondary" />
-            <div className="h-5 w-56 animate-pulse rounded bg-secondary" />
+            <Skeleton className="mb-2 h-8 w-72" />
+            <Skeleton className="h-5 w-56" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-6">
             {[1, 2, 3, 4, 5].map((i) => (
               <StatSkeleton key={i} />
             ))}
           </div>
-          <div className="h-72 animate-pulse rounded-xl bg-secondary" />
+          <Skeleton className="h-72" />
         </main>
       </div>
     );

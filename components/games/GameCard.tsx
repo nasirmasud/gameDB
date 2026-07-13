@@ -1,8 +1,12 @@
+"use client";
+
 import { PlatformIcons } from "@/components/games/PlatformIcons";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { RawgGameSummary } from "@/lib/rawg";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 interface GameCardProps {
   game: RawgGameSummary;
@@ -15,6 +19,7 @@ function getRatingColor(rating: number) {
 }
 
 export function GameCard({ game }: GameCardProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
   const ratingOutOf10 = (game.rating * 2).toFixed(1);
 
   return (
@@ -22,14 +27,16 @@ export function GameCard({ game }: GameCardProps) {
       href={`/games/${game.id}`}
       className='group relative flex w-full shrink-0 flex-col overflow-hidden rounded-sm border border-border bg-card transition-transform hover:-translate-y-1'
     >
-      <div className='relative aspect-[4/5] w-full overflow-hidden'>
+      <div className='relative aspect-[4/5] w-full overflow-hidden bg-secondary'>
+        {!imageLoaded && <Skeleton className='absolute inset-0 rounded-none' />}
         {game.background_image ? (
           <Image
             src={game.background_image}
             alt={game.name}
             fill
             sizes='(max-width: 768px) 320px, 440px'
-            className='object-cover transition-transform duration-300 group-hover:scale-105'
+            className={`object-cover transition-all duration-300 group-hover:scale-105 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+            onLoad={() => setImageLoaded(true)}
           />
         ) : (
           <div className='flex h-full w-full items-center justify-center bg-secondary text-sm text-muted-foreground'>
