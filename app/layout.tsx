@@ -41,7 +41,7 @@ export default function RootLayout({
         <ThemeProvider>
           <SessionProvider>
             <Navbar />
-            {children}
+            <div className="grow w-full">{children}</div>
             <Footer />
             <Toaster theme='dark' position='bottom-center' />
           </SessionProvider>

@@ -1,13 +1,28 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { connectDB } from "@/lib/mongodb";
+import User from "@/models/User";
 import { DashboardContent } from "@/components/dashboard/DashboardContent";
 
 export default async function UserDashboardPage() {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect("/login");
   }
 
-  return <DashboardContent user={session.user} />;
+  await connectDB();
+  const dbUser = await User.findById(session.user.id).select("createdAt").lean();
+
+  return (
+    <DashboardContent
+      user={{
+        id: session.user.id,
+        name: session.user.name,
+        email: session.user.email,
+        image: session.user.image,
+        createdAt: dbUser?.createdAt?.toISOString() ?? null,
+      }}
+    />
+  );
 }

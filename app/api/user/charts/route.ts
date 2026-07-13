@@ -9,7 +9,7 @@ function formatLabel(year: number, month: number): string {
   return date.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -19,11 +19,14 @@ export async function GET() {
     await connectDB();
 
     const userId = session.user.id;
+    const { searchParams } = new URL(req.url);
+    const range = parseInt(searchParams.get("range") ?? "6", 10);
+    const months = [3, 6, 12].includes(range) ? range : 6;
     const now = new Date();
     const labels: string[] = [];
     const monthKeys: string[] = [];
 
-    for (let i = 5; i >= 0; i--) {
+    for (let i = months - 1; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       labels.push(formatLabel(d.getFullYear(), d.getMonth() + 1));
       monthKeys.push(`${d.getFullYear()}-${d.getMonth() + 1}`);
