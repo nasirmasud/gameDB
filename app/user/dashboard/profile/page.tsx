@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { UserProfileForm } from "@/components/dashboard/UserProfileForm";
 import Link from "next/link";
 import { ArrowLeft, User } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Profile",
+};
 
 export default async function UserProfilePage() {
   const session = await auth();

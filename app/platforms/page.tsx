@@ -1,5 +1,11 @@
 import { getGames, getPlatforms } from "@/lib/rawg";
 import { PlatformsContent } from "@/components/platforms/PlatformsContent";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Platforms",
+  description: "Explore games by platform.",
+};
 
 export default async function PlatformsPage() {
   const { results: platforms } = await getPlatforms();

@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import Review from "@/models/Review";
 import Favorite from "@/models/Favorite";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Activity",
+};
 import Link from "next/link";
 import { ArrowLeft, MessageSquare, Heart, Pencil } from "lucide-react";
 

@@ -1,6 +1,11 @@
 import { LoginForm } from "@/components/auth/LoginForm";
 import { Gamepad2 } from "lucide-react";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Login",
+};
 
 interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

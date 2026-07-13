@@ -22,10 +22,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   await connectDB();
   const game = await CustomGame.findById(id).lean();
 
-  if (!game) return { title: "Custom Game - GameDB" };
+  if (!game) return { title: "Custom Game" };
 
   return {
-    title: `${game.title} - GameDB`,
+    title: game.title,
     description: game.shortDescription,
   };
 }

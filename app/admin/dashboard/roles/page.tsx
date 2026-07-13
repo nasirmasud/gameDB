@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Roles",
+};
 import { ArrowLeft, ShieldCheck, User as UserIcon } from "lucide-react";
 
 export default async function AdminRolesPage() {

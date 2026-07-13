@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import CustomGame from "@/models/CustomGame";
 import { AdminCustomGamesTable } from "@/components/admin/AdminCustomGamesTable";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Custom Games",
+};
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 

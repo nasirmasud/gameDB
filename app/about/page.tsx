@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Gamepad2, Users, Award, TrendingUp } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "About - GameDB",
+  title: "About",
   description: "Learn about GameDB — the ultimate game discovery platform.",
 };
 

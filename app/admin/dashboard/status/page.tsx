@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import mongoose from "mongoose";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Status",
+};
 import {
   ArrowLeft,
   Wifi,

@@ -1,5 +1,11 @@
 import { getGames } from "@/lib/rawg";
 import { NewsContent } from "@/components/news/NewsContent";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "News",
+  description: "Latest gaming news and updates.",
+};
 
 export default async function NewsPage() {
   const today = new Date();

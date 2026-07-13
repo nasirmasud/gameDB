@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const game = await getGameById(id);
   return {
-    title: `${game.name} - GameDB`,
+    title: game.name,
     description: game.description_raw?.slice(0, 160),
   };
 }

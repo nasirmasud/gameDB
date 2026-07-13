@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import CustomGame from "@/models/CustomGame";
 import { UserCustomGamesTable } from "@/components/dashboard/UserCustomGamesTable";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "My Custom Games",
+};
 import Link from "next/link";
 import { ArrowLeft, Plus } from "lucide-react";
 

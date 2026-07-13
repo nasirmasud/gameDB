@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import Review from "@/models/Review";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Users",
+};
 import Favorite from "@/models/Favorite";
 import { AdminUsersTable } from "@/components/admin/AdminUsersTable";
 import Link from "next/link";

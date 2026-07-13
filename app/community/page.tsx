@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { connectDB } from "@/lib/mongodb";
 import CustomGame from "@/models/CustomGame";
 import { Calendar } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Community",
+  description: "Discover custom games created by the community.",
+};
 import { FaWindows, FaPlaystation, FaXbox, FaApple, FaLinux, FaAndroid } from "react-icons/fa";
 import { BsNintendoSwitch, BsGlobe } from "react-icons/bs";
 import { MdPhoneIphone } from "react-icons/md";

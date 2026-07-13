@@ -16,7 +16,10 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "GameDB",
+  title: {
+    default: "GameDB",
+    template: "GameDB | %s",
+  },
   description: "Discover, track, and review your favorite games.",
 };
 

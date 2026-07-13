@@ -3,6 +3,12 @@ import { ExplorePagination } from "@/components/explore/ExplorePagination";
 import { ExploreToolbar } from "@/components/explore/ExploreToolbar";
 import { GameCard } from "@/components/games/GameCard";
 import { getGames, getGenres, getPlatforms } from "@/lib/rawg";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Games",
+  description: "Browse and explore thousands of games.",
+};
 
 interface ExplorePageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

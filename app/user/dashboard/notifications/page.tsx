@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import Review from "@/models/Review";
 import Favorite from "@/models/Favorite";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Notifications",
+};
 import { NotificationsList } from "@/components/dashboard/NotificationsList";
 import Link from "next/link";
 import { ArrowLeft, Bell } from "lucide-react";

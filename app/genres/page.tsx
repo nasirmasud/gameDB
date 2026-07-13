@@ -1,5 +1,11 @@
 import { getGenres } from "@/lib/rawg";
 import { GenresContent } from "@/components/genres/GenresContent";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Genres",
+  description: "Explore games by genre.",
+};
 
 export default async function GenresPage() {
   const { results } = await getGenres();

@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import { getGameById } from "@/lib/rawg";
 import Review from "@/models/Review";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Games",
+};
 import Favorite from "@/models/Favorite";
 import Link from "next/link";
 import { AdminGamesTable } from "@/components/admin/AdminGamesTable";

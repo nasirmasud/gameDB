@@ -3,6 +3,11 @@ import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
 import { getGameById } from "@/lib/rawg";
 import Review from "@/models/Review";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "My Reviews",
+};
 import { UserReviewsTable } from "@/components/dashboard/UserReviewsTable";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
