@@ -3,7 +3,7 @@
 import { PlatformIcons } from "@/components/games/PlatformIcons";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { RawgGameSummary } from "@/lib/rawg";
-import { Star } from "lucide-react";
+import { Award, Meh, Star, ThumbsDown, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -11,6 +11,23 @@ import { useState } from "react";
 interface GameCardProps {
   game: RawgGameSummary;
 }
+
+type RatingTier = "exceptional" | "recommended" | "meh" | "skip";
+
+function getRatingTier(rating: number): RatingTier | null {
+  if (rating >= 4.5) return "exceptional";
+  if (rating >= 4) return "recommended";
+  if (rating >= 3) return "meh";
+  if (rating > 0) return "skip";
+  return null;
+}
+
+const tierIcon: Record<RatingTier, { icon: React.ReactNode; label: string }> = {
+  exceptional: { icon: <Award className='h-[50px] w-[50px] text-amber-500' />, label: "Exceptional" },
+  recommended: { icon: <ThumbsUp className='h-[50px] w-[50px] text-blue-500' />, label: "Recommended" },
+  meh: { icon: <Meh className='h-[50px] w-[50px] text-muted-foreground' />, label: "Mixed" },
+  skip: { icon: <ThumbsDown className='h-[50px] w-[50px] text-red-500' />, label: "Skip" },
+};
 
 function getRatingColor(rating: number) {
   if (rating >= 4.5) return "text-primary";
@@ -21,6 +38,7 @@ function getRatingColor(rating: number) {
 export function GameCard({ game }: GameCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const ratingOutOf10 = (game.rating * 2).toFixed(1);
+  const tier = getRatingTier(game.rating);
 
   return (
     <Link
@@ -41,6 +59,15 @@ export function GameCard({ game }: GameCardProps) {
         ) : (
           <div className='flex h-full w-full items-center justify-center bg-secondary text-sm text-muted-foreground'>
             No image
+          </div>
+        )}
+
+        {tier && (
+          <div
+            className='absolute right-2 top-2 drop-shadow-lg'
+            title={tierIcon[tier].label}
+          >
+            {tierIcon[tier].icon}
           </div>
         )}
 

@@ -16,6 +16,7 @@ export interface RawgGameSummary {
   rating: number;
   rating_top: number;
   ratings_count: number;
+  ratings: RawgRating[];
   metacritic: number | null;
   playtime: number;
   genres: { id: number; name: string; slug: string }[];
