@@ -41,7 +41,7 @@ export function CustomGamesClient({ games }: Props) {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold text-foreground">Community Games</h2>
         <Link
-          href="/user/dashboard/custom-games"
+          href="/community"
           className="text-sm font-medium text-primary hover:underline"
         >
           View All →

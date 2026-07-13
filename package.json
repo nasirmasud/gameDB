@@ -6,10 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "seed": "node scripts/seed.mjs",
-    "seed:demo": "node scripts/seed-demo.mjs",
-    "seed:activity": "node scripts/seed-demo-activity.mjs"
+    "lint": "eslint"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
