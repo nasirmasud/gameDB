@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/mongodb";
 import Review from "@/models/Review";
 import Favorite from "@/models/Favorite";
 import Link from "next/link";
-import { ArrowLeft, MessageSquare, BookmarkCheck, Pencil } from "lucide-react";
+import { ArrowLeft, MessageSquare, Heart, Pencil } from "lucide-react";
 
 function timeAgo(date: Date): string {
   const diff = Date.now() - new Date(date).getTime();
@@ -21,12 +21,12 @@ function timeAgo(date: Date): string {
 
 const iconMap: Record<string, typeof MessageSquare> = {
   review: MessageSquare,
-  bookmark: BookmarkCheck,
+  wishlist: Heart,
 };
 
 const colorMap: Record<string, string> = {
   review: "bg-blue-600/30 text-blue-400",
-  bookmark: "bg-purple-600/30 text-purple-400",
+  wishlist: "bg-purple-600/30 text-purple-400",
 };
 
 export default async function UserActivityPage() {
@@ -38,7 +38,7 @@ export default async function UserActivityPage() {
   await connectDB();
   const userId = session.user.id;
 
-  const [reviews, bookmarks] = await Promise.all([
+  const [reviews, wishlistItems] = await Promise.all([
     Review.find({ user: userId }).sort({ createdAt: -1 }).limit(50).lean(),
     Favorite.find({ user: userId }).sort({ createdAt: -1 }).limit(50).lean(),
   ]);
@@ -67,10 +67,10 @@ export default async function UserActivityPage() {
     });
   }
 
-  for (const b of bookmarks) {
+  for (const b of wishlistItems) {
     all.push({
-      icon: "bookmark",
-      title: "Game bookmarked",
+      icon: "wishlist",
+      title: "Game wishlisted",
       subtitle: b.gameName,
       time: timeAgo(b.createdAt),
       sortKey: new Date(b.createdAt).getTime(),

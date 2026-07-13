@@ -5,25 +5,34 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-async function redirectAfterLogin() {
-  const res = await fetch("/api/auth/session");
-  const session = await res.json();
-  if (session?.user?.role === "admin") {
-    return "/admin/dashboard";
-  }
+interface Props {
+  callbackUrl?: string;
+}
+
+function getDefaultRedirect(role?: string) {
+  if (role === "admin") return "/admin/dashboard";
   return "/user/dashboard";
 }
 
-export function LoginForm() {
+export function LoginForm({ callbackUrl: propCallbackUrl }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = propCallbackUrl || searchParams.get("callbackUrl") || "";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [quickLoading, setQuickLoading] = useState<string | null>(null);
+
+  async function getRedirectPath() {
+    const res = await fetch("/api/auth/session");
+    const session = await res.json();
+    return callbackUrl || getDefaultRedirect(session?.user?.role);
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +52,7 @@ export function LoginForm() {
     }
 
     toast.success("Welcome back!");
-    router.push(await redirectAfterLogin());
+    router.push(await getRedirectPath());
     router.refresh();
   };
 
@@ -58,7 +67,7 @@ export function LoginForm() {
     }
 
     toast.success(`Logged in as ${label}!`);
-    router.push(await redirectAfterLogin());
+    router.push(await getRedirectPath());
     router.refresh();
   };
 

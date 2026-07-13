@@ -16,7 +16,7 @@ export async function GET() {
 
     const userId = session.user.id;
 
-    const [totalBookmarks, totalReviews] = await Promise.all([
+    const [totalWishlist, totalReviews] = await Promise.all([
       Favorite.countDocuments({ user: userId }),
       Review.countDocuments({ user: userId }),
     ]);
@@ -70,8 +70,7 @@ export async function GET() {
     });
 
     return NextResponse.json({
-      totalBookmarks,
-      totalWishlist: totalBookmarks,
+      totalWishlist,
       totalReviews,
       totalRatings: totalReviews,
       reviewsByStatus: reviewsByStatusFormatted,

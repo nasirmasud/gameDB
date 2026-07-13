@@ -27,7 +27,7 @@ export async function GET() {
 
     const userId = session.user.id;
 
-    const [recentReviews, recentBookmarks] = await Promise.all([
+    const [recentReviews, wishlistItems] = await Promise.all([
       Review.find({ user: userId }).sort({ createdAt: -1 }).limit(5).lean(),
       Favorite.find({ user: userId }).sort({ createdAt: -1 }).limit(3).lean(),
     ]);
@@ -64,11 +64,11 @@ export async function GET() {
       });
     });
 
-    recentBookmarks.forEach((b) => {
+    wishlistItems.forEach((b) => {
       all.push({
-        icon: "bookmark",
+        icon: "wishlist",
         color: "bg-purple-600/30 text-purple-400",
-        title: "Game bookmarked",
+        title: "Game wishlisted",
         subtitle: b.gameName,
         time: timeAgo(b.createdAt),
         sortKey: new Date(b.createdAt).getTime(),

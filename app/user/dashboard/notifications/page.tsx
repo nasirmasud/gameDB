@@ -28,7 +28,7 @@ export default async function UserNotificationsPage() {
   await connectDB();
   const userId = session.user.id;
 
-  const [reviews, bookmarks] = await Promise.all([
+  const [reviews, wishlistItems] = await Promise.all([
     Review.find({ user: userId }).sort({ createdAt: -1 }).limit(50).lean(),
     Favorite.find({ user: userId }).sort({ createdAt: -1 }).limit(30).lean(),
   ]);
@@ -59,11 +59,11 @@ export default async function UserNotificationsPage() {
     });
   }
 
-  for (const b of bookmarks) {
+  for (const b of wishlistItems) {
     notifications.push({
-      id: `bookmark-${b._id}`,
-      icon: "bookmark",
-      title: "Game bookmarked",
+      id: `wishlist-${b._id}`,
+      icon: "wishlist",
+      title: "Game wishlisted",
       subtitle: b.gameName,
       time: timeAgo(b.createdAt),
       read: true,

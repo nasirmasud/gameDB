@@ -7,12 +7,7 @@ import { UserFavoritesTable } from "@/components/dashboard/UserFavoritesTable";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default async function UserFavoritesPage(props: {
-  searchParams: Promise<{ view?: string }>;
-}) {
-  const { view } = await props.searchParams;
-  const label = view === "wishlist" ? "Wishlist" : "Bookmarks";
-
+export default async function UserFavoritesPage() {
   const session = await auth();
   if (!session?.user?.id) {
     redirect("/login");
@@ -69,9 +64,9 @@ export default async function UserFavoritesPage(props: {
           <ArrowLeft className="h-4 w-4" /> Back
         </Link>
         <div>
-          <h1 className="text-xl font-bold sm:text-2xl">My {label}</h1>
+          <h1 className="text-xl font-bold sm:text-2xl">My Wishlist</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {rows.length} {view === "wishlist" ? "wishlisted" : "bookmarked"} games.
+            {rows.length} wishlisted games.
           </p>
         </div>
       </div>

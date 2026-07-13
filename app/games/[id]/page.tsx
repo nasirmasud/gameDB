@@ -11,7 +11,8 @@ import {
 } from "@/lib/rawg";
 import { ScreenshotGallery } from "@/components/games/ScreenshotGallery";
 import { ReviewSection } from "@/components/games/ReviewSection";
-import { Heart, Star } from "lucide-react";
+import { WishlistButton } from "@/components/games/WishlistButton";
+import { ExternalLink, Star } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -265,24 +266,27 @@ export default async function GameDetailsPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Purchase card */}
+          {/* Actions card */}
           <Card className='rounded-xs h-fit border-border bg-card/90 backdrop-blur-sm lg:self-center'>
             <CardContent className='p-6'>
-              <p className='mb-4 text-3xl font-bold'>
-                {game.metacritic ? `$${game.metacritic + 20}` : "$59.99"}
-              </p>
-              <Button className='w-full mb-3 cursor-pointer text-base py-5'>
-                Buy Now
-              </Button>
-              <Button
-                variant='outline'
-                className='w-full mb-5 flex items-center justify-center gap-2 cursor-pointer'
-                size='lg'
+              <a
+                href={game.website || `https://www.google.com/search?q=${encodeURIComponent(game.name + " game")}`}
+                target='_blank'
+                rel='noopener noreferrer'
               >
-                <Heart className='h-4 w-4' /> Add to Wishlist
-              </Button>
+                <Button className='w-full mb-3 cursor-pointer text-base py-5'>
+                  <ExternalLink className='h-4 w-4' /> Visit Website
+                </Button>
+              </a>
 
-              <ul className='flex flex-col gap-3 text-sm'>
+              <WishlistButton
+                gameId={game.id}
+                gameName={game.name}
+                gameImage={game.background_image ?? undefined}
+                gameRating={game.rating}
+              />
+
+              <ul className='mt-5 flex flex-col gap-3 text-sm'>
                 <li className='flex items-center justify-between'>
                   <span className='flex items-center gap-2 text-muted-foreground'>
                     Offline Play

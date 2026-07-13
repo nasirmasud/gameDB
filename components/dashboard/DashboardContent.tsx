@@ -5,7 +5,6 @@ import Chart from "chart.js/auto";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import {
-  Bookmark,
   Heart,
   LogOut,
   Menu,
@@ -17,12 +16,10 @@ import {
   ExternalLink,
   ChevronRight,
   MessageSquare,
-  BookmarkCheck,
   UserPlus,
 } from "lucide-react";
 
 interface UserStats {
-  totalBookmarks: number;
   totalWishlist: number;
   totalReviews: number;
   totalRatings: number;
@@ -53,7 +50,6 @@ interface ChartResponse {
   labels: string[];
   reviews: number[];
   ratings: number[];
-  bookmarks: number[];
   wishlist: number[];
 }
 
@@ -89,7 +85,6 @@ export function DashboardContent({ user }: DashboardContentProps) {
     labels: [],
     reviews: [],
     ratings: [],
-    bookmarks: [],
     wishlist: [],
   });
   const [chartRange, setChartRange] = useState(6);
@@ -151,14 +146,6 @@ export function DashboardContent({ user }: DashboardContentProps) {
                 data: chartData.ratings,
                 borderColor: "#a855f7",
                 backgroundColor: "#a855f7",
-                tension: 0.4,
-                pointRadius: 3,
-              },
-              {
-                label: "Bookmarks",
-                data: chartData.bookmarks,
-                borderColor: "#22c55e",
-                backgroundColor: "#22c55e",
                 tension: 0.4,
                 pointRadius: 3,
               },
@@ -252,7 +239,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
 
   const activityIconMap: Record<string, typeof MessageSquare> = {
     review: MessageSquare,
-    bookmark: BookmarkCheck,
+    wishlist: Heart,
     user: UserPlus,
   };
 
@@ -302,13 +289,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
             <span className="text-base">▦</span> Dashboard
           </Link>
           <Link
-            href="/user/dashboard/favorites?view=bookmarks"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground hover:bg-secondary"
-          >
-            <Bookmark className="h-4 w-4" /> Bookmarks
-          </Link>
-          <Link
-            href="/user/dashboard/favorites?view=wishlist"
+            href="/user/dashboard/favorites"
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground hover:bg-secondary"
           >
             <Heart className="h-4 w-4" /> Wishlist
@@ -417,26 +398,6 @@ export function DashboardContent({ user }: DashboardContentProps) {
         <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-3">
           <div className="rounded-xl border border-border bg-card p-4">
             <p className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-600/30 text-purple-400">
-                <Bookmark className="h-3.5 w-3.5" />
-              </span>
-              Bookmarks
-            </p>
-            <p className="mb-1 text-2xl font-bold">
-              {stats?.totalBookmarks ?? 0}{" "}
-              <span className="text-sm font-normal text-muted-foreground">
-                Total Saved
-              </span>
-            </p>
-            <Link
-              href="/user/dashboard/favorites?view=bookmarks"
-              className="flex items-center gap-1 text-sm text-blue-400 hover:underline"
-            >
-              View all <ChevronRight className="h-3 w-3" />
-            </Link>
-          </div>
-          <div className="rounded-xl border border-border bg-card p-4">
-            <p className="mb-3 flex items-center gap-2 text-sm text-muted-foreground">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-pink-600/30 text-pink-400">
                 <Heart className="h-3.5 w-3.5" />
               </span>
@@ -449,7 +410,7 @@ export function DashboardContent({ user }: DashboardContentProps) {
               </span>
             </p>
             <Link
-              href="/user/dashboard/favorites?view=wishlist"
+              href="/user/dashboard/favorites"
               className="flex items-center gap-1 text-sm text-blue-400 hover:underline"
             >
               View all <ChevronRight className="h-3 w-3" />
@@ -498,9 +459,6 @@ export function DashboardContent({ user }: DashboardContentProps) {
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-purple-500" /> Ratings
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-green-500" /> Bookmarks
                 </span>
                 <span className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-red-500" /> Wishlist

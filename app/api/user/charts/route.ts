@@ -64,13 +64,12 @@ export async function GET(req: Request) {
       labels,
       reviews: monthKeys.map((k) => reviewMap[k] ?? 0),
       ratings: monthKeys.map((k) => reviewMap[k] ?? 0),
-      bookmarks: monthKeys.map((k) => favoriteMap[k] ?? 0),
       wishlist: monthKeys.map((k) => favoriteMap[k] ?? 0),
     });
   } catch (error) {
     console.error("User charts error:", error);
     return NextResponse.json(
-      { labels: [], reviews: [], ratings: [], bookmarks: [], wishlist: [] },
+      { labels: [], reviews: [], ratings: [], wishlist: [] },
       { status: 500 },
     );
   }

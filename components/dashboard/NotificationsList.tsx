@@ -23,14 +23,14 @@ const iconMap: Record<string, typeof CheckCircle> = {
   check: CheckCircle,
   clock: Clock,
   x: XCircle,
-  bookmark: BookmarkCheck,
+  wishlist: BookmarkCheck,
 };
 
 const iconColors: Record<string, string> = {
   check: "bg-green-600/30 text-green-400",
   clock: "bg-yellow-600/30 text-yellow-400",
   x: "bg-red-600/30 text-red-400",
-  bookmark: "bg-purple-600/30 text-purple-400",
+  wishlist: "bg-purple-600/30 text-purple-400",
 };
 
 export function NotificationsList({
