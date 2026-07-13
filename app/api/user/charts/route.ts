@@ -32,18 +32,6 @@ export async function GET(req: Request) {
       monthKeys.push(`${d.getFullYear()}-${d.getMonth() + 1}`);
     }
 
-    const toCumulativeMap = (
-      items: Array<{ _id: { year: number; month: number }; count: number }>,
-    ): Record<string, number> => {
-      const map: Record<string, number> = {};
-      let running = 0;
-      for (const item of items) {
-        running += item.count;
-        map[`${item._id.year}-${item._id.month}`] = running;
-      }
-      return map;
-    };
-
     const [reviewGroups, favoriteGroups] = await Promise.all([
       Review.aggregate([
         { $match: { user: userId } },
@@ -57,14 +45,28 @@ export async function GET(req: Request) {
       ]),
     ]);
 
-    const reviewMap = toCumulativeMap(reviewGroups);
-    const favoriteMap = toCumulativeMap(favoriteGroups);
+    const accumulateTo = (
+      items: Array<{ _id: { year: number; month: number }; count: number }>,
+    ): number[] => {
+      const map: Record<string, number> = {};
+      let running = 0;
+      for (const item of items) {
+        running += item.count;
+        map[`${item._id.year}-${item._id.month}`] = running;
+      }
+      let last = 0;
+      return monthKeys.map((k) => {
+        const v = k in map ? map[k] : last;
+        last = v;
+        return v;
+      });
+    };
 
     return NextResponse.json({
       labels,
-      reviews: monthKeys.map((k) => reviewMap[k] ?? 0),
-      ratings: monthKeys.map((k) => reviewMap[k] ?? 0),
-      wishlist: monthKeys.map((k) => favoriteMap[k] ?? 0),
+      reviews: accumulateTo(reviewGroups),
+      ratings: accumulateTo(reviewGroups),
+      wishlist: accumulateTo(favoriteGroups),
     });
   } catch (error) {
     console.error("User charts error:", error);

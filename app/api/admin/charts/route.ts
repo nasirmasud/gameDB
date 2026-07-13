@@ -37,22 +37,6 @@ export async function GET(req: Request) {
       monthKeys.push(getMonthKey(d));
     }
 
-    const toCumulativeMap = (
-      items: Array<{ _id: { year: number; month: number }; count: number }>,
-    ): Record<string, number> => {
-      const map: Record<string, number> = {};
-      let running = 0;
-      for (const item of items) {
-        running += item.count;
-        map[`${item._id.year}-${item._id.month}`] = running;
-      }
-      return map;
-    };
-
-    const getDataForLabels = (map: Record<string, number>): number[] => {
-      return monthKeys.map((key) => map[key] ?? 0);
-    };
-
     const [userGroups, reviewGroups, customGameGroups] = await Promise.all([
       User.aggregate([
         { $group: { _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } }, count: { $sum: 1 } } },
@@ -68,15 +52,28 @@ export async function GET(req: Request) {
       ]),
     ]);
 
-    const userMap = toCumulativeMap(userGroups);
-    const reviewMap = toCumulativeMap(reviewGroups);
-    const customGameMap = toCumulativeMap(customGameGroups);
+    const accumulateTo = (
+      items: Array<{ _id: { year: number; month: number }; count: number }>,
+    ): number[] => {
+      const map: Record<string, number> = {};
+      let running = 0;
+      for (const item of items) {
+        running += item.count;
+        map[`${item._id.year}-${item._id.month}`] = running;
+      }
+      let last = 0;
+      return monthKeys.map((k) => {
+        const v = k in map ? map[k] : last;
+        last = v;
+        return v;
+      });
+    };
 
     return NextResponse.json({
       labels,
-      users: getDataForLabels(userMap),
-      games: getDataForLabels(customGameMap),
-      reviews: getDataForLabels(reviewMap),
+      users: accumulateTo(userGroups),
+      games: accumulateTo(customGameGroups),
+      reviews: accumulateTo(reviewGroups),
     });
   } catch (error) {
     console.error("Admin charts error:", error);
