@@ -10,6 +10,7 @@ import {
   type RawgGameSummary,
 } from "@/lib/rawg";
 import { ScreenshotGallery } from "@/components/games/ScreenshotGallery";
+import { ReviewSection } from "@/components/games/ReviewSection";
 import { Heart, Star } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -352,6 +353,15 @@ export default async function GameDetailsPage({ params }: Props) {
             )}
           </section>
 
+          {/* User Reviews */}
+          <section id='user-reviews'>
+            <ReviewSection
+              gameId={game.id}
+              gameName={game.name}
+              gameImage={game.background_image ?? undefined}
+            />
+          </section>
+
           {/* Similar Games */}
           {similarGames.length > 0 && (
             <section>
@@ -441,12 +451,14 @@ export default async function GameDetailsPage({ params }: Props) {
                 })}
               </div>
 
-              <Button
-                variant='outline'
-                className='mt-4 w-full cursor-pointer'
-              >
-                Read All Reviews
-              </Button>
+              <a href='#user-reviews'>
+                <Button
+                  variant='outline'
+                  className='mt-4 w-full cursor-pointer'
+                >
+                  Read All Reviews
+                </Button>
+              </a>
             </CardContent>
           </Card>
 

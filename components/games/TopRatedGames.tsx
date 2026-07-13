@@ -176,7 +176,7 @@ export async function TopRatedGames() {
   const columns = chunk(deduped, 3);
 
   return (
-    <section className='w-full px-8 py-20 pb-40 md:px-12 lg:px-16'>
+    <section className='w-full px-8 py-20 md:px-12 lg:px-16'>
       <div className='mb-4 flex items-center justify-between'>
         <h2 className='text-xl font-bold text-foreground'>Top Rated Games</h2>
         <Link

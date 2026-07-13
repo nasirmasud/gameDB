@@ -13,6 +13,8 @@ const NAV_LINKS = [
   { href: "/genres", label: "Genres" },
   { href: "/platforms", label: "Platforms" },
   { href: "/news", label: "News" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export async function Navbar() {
