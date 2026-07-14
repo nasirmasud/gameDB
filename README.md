@@ -326,7 +326,7 @@ Login / Register
 | View Platform Analytics | ❌ | ❌ | ✅ |
 | View Platform Activity Feed | ❌ | ❌ | ✅ |
 | System Status Monitoring | ❌ | ❌ | ✅ |
-| Delete Own Account | ❌ | ✅ | ✅ |
+| Delete Own Account | ❌ | ✅ | ❌ |
 
 ---
 
