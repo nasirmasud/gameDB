@@ -17,13 +17,13 @@ export async function GET() {
   try {
     await connectDB();
 
-    const user = await User.findById(session.user.id).select("name email").lean();
+    const user = await User.findById(session.user.id).select("name email image").lean();
 
     if (!user) {
       return NextResponse.json({ error: "User not found." }, { status: 404 });
     }
 
-    return NextResponse.json({ name: user.name, email: user.email });
+    return NextResponse.json({ name: user.name, email: user.email, image: user.image });
   } catch (error) {
     console.error("Profile GET error:", error);
     return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
@@ -39,7 +39,7 @@ export async function PATCH(req: Request) {
   try {
     await connectDB();
 
-    const { name, currentPassword, newPassword } = await req.json();
+    const { name, image, currentPassword, newPassword } = await req.json();
 
     const updateData: Record<string, string> = {};
 
@@ -48,6 +48,10 @@ export async function PATCH(req: Request) {
         return NextResponse.json({ error: "Name cannot be empty." }, { status: 400 });
       }
       updateData.name = name.trim();
+    }
+
+    if (image !== undefined) {
+      updateData.image = image;
     }
 
     if (currentPassword !== undefined || newPassword !== undefined) {

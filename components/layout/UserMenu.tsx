@@ -9,20 +9,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { LogOut, User, Loader2 } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
-interface UserMenuProps {
-  user: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-    role?: "user" | "admin";
-  };
-}
+export function UserMenu() {
+  const { data: session } = useSession();
+  const user = session?.user;
 
-export function UserMenu({ user }: UserMenuProps) {
+  if (!user) return null;
+
   const initials = (user.name ?? user.email ?? "?")
     .split(" ")
     .map((part) => part[0])

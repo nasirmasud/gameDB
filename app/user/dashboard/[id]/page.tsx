@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { connectDB } from "@/lib/mongodb";
@@ -33,9 +34,12 @@ export default async function UserProfilePage({
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
       <div className="rounded-xl border border-border bg-card p-6 mb-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-secondary text-xl font-bold">
-            {(profileUser.name ?? "U").charAt(0).toUpperCase()}
-          </div>
+          <Avatar className="h-16 w-16 border border-border">
+            <AvatarImage src={profileUser.image} alt={profileUser.name ?? "User"} />
+            <AvatarFallback className="bg-secondary text-xl font-bold">
+              {(profileUser.name ?? "U").charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
           <div>
             <h1 className="text-2xl font-bold">{profileUser.name}</h1>
             <p className="text-sm text-muted-foreground">

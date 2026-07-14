@@ -58,12 +58,12 @@ export function GameRow({
                   <GameCardSkeleton />
                 </div>
               ))
-            : games.map((game) => (
+            : games.map((game, index) => (
                 <div
                   key={game.id}
                   className='w-[180px] shrink-0 sm:w-[220px] lg:w-[240px]'
                 >
-                  <GameCard game={game} />
+                  <GameCard game={game} priority={index < 2} />
                 </div>
               ))}
         </div>

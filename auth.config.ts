@@ -48,11 +48,16 @@ export const authConfig: NextAuthConfig = {
 
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id;
         token.role = (user as { role?: string }).role ?? "user";
         token.isBanned = (user as { isBanned?: boolean }).isBanned ?? false;
+        token.image = (user as { image?: string | null }).image ?? null;
+      }
+      if (trigger === "update" && session) {
+        token.name = (session as { name?: string }).name ?? token.name;
+        token.image = (session as { image?: string | null }).image ?? token.image;
       }
       return token;
     },
@@ -61,6 +66,7 @@ export const authConfig: NextAuthConfig = {
         session.user.id = token.id as string;
         session.user.role = token.role as "user" | "admin";
         session.user.isBanned = token.isBanned as boolean;
+        session.user.image = token.image as string | null | undefined;
       }
       return session;
     },

@@ -1,5 +1,6 @@
 "use client";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Chart from "chart.js/auto";
@@ -261,17 +262,12 @@ export function DashboardContent({ user }: DashboardContentProps) {
         } w-64 shrink-0 flex-col gap-6 border-r border-border bg-background p-5 lg:relative lg:flex lg:inset-auto lg:z-auto`}
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-secondary text-sm font-semibold">
-            {user.image ? (
-              <img
-                src={user.image}
-                alt={user.name ?? "User"}
-                className="h-full w-full rounded-full object-cover"
-              />
-            ) : (
-              initials(user.name, user.email)
-            )}
-          </div>
+          <Avatar className="h-11 w-11 border border-border">
+            <AvatarImage src={user.image ?? undefined} alt={user.name ?? "User"} />
+            <AvatarFallback className="bg-secondary text-sm font-semibold">
+              {initials(user.name, user.email)}
+            </AvatarFallback>
+          </Avatar>
           <div>
             <p className="text-sm font-semibold leading-tight">
               {user.name ?? "User"}

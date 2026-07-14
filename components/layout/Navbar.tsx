@@ -31,6 +31,7 @@ export async function Navbar() {
             alt='GameDB Logo'
             width={64}
             height={64}
+            priority
             className='h-15 w-15 object-contain'
           />
           <span className='text-lg font-bold tracking-tight text-foreground'>
@@ -58,7 +59,7 @@ export async function Navbar() {
 
           {user ? (
             <div className='hidden md:block'>
-              <UserMenu user={user} />
+              <UserMenu />
             </div>
           ) : (
             <div className='hidden md:flex items-center gap-2'>
@@ -80,7 +81,7 @@ export async function Navbar() {
             </div>
           )}
 
-          <MobileNav user={user} />
+          <MobileNav />
         </div>
       </div>
     </header>

@@ -20,5 +20,6 @@ declare module "next-auth/jwt" {
     id?: string;
     role?: "user" | "admin";
     isBanned?: boolean;
+    image?: string | null;
   }
 }

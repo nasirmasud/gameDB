@@ -35,6 +35,7 @@ export default async function AdminUsersPage() {
         email: u.email,
         role: u.role,
         isBanned: u.isBanned,
+        image: u.image,
         createdAt: u.createdAt.toISOString(),
         reviewCount,
         favoriteCount,

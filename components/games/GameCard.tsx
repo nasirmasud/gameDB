@@ -10,6 +10,7 @@ import { useState } from "react";
 
 interface GameCardProps {
   game: RawgGameSummary;
+  priority?: boolean;
 }
 
 type RatingTier = "exceptional" | "recommended" | "meh" | "skip";
@@ -35,7 +36,7 @@ function getRatingColor(rating: number) {
   return "text-red-400";
 }
 
-export function GameCard({ game }: GameCardProps) {
+export function GameCard({ game, priority = false }: GameCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const ratingOutOf10 = (game.rating * 2).toFixed(1);
   const tier = getRatingTier(game.rating);
@@ -52,6 +53,7 @@ export function GameCard({ game }: GameCardProps) {
             src={game.background_image}
             alt={game.name}
             fill
+            priority={priority}
             sizes='(max-width: 768px) 320px, 440px'
             className={`object-cover transition-all duration-300 group-hover:scale-105 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
             onLoad={() => setImageLoaded(true)}

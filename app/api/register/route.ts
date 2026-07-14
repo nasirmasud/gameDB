@@ -5,7 +5,7 @@ import User from "@/models/User";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json();
+    const { name, email, password, image } = await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "All fields are required." }, { status: 400 });
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
       email: email.toLowerCase(),
       password: hashedPassword,
       role: "user",
+      ...(image && { image }),
     });
 
     return NextResponse.json(

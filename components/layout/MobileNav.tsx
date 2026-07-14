@@ -17,7 +17,7 @@ import {
   PlusCircle,
   ShieldCheck,
 } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -31,15 +31,9 @@ const PUBLIC_LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
-interface MobileNavProps {
-  user?: {
-    name?: string | null;
-    email?: string | null;
-    role?: "user" | "admin";
-  } | null;
-}
-
-export function MobileNav({ user }: MobileNavProps) {
+export function MobileNav() {
+  const { data: session } = useSession();
+  const user = session?.user;
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 

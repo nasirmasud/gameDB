@@ -1,13 +1,21 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { FieldTooltip } from "@/components/ui/field-tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "sonner";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+interface FieldErrors {
+  email?: string;
+  password?: string;
+}
 
 interface Props {
   callbackUrl?: string;
@@ -25,8 +33,20 @@ export function LoginForm({ callbackUrl: propCallbackUrl }: Props) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [quickLoading, setQuickLoading] = useState<string | null>(null);
+
+  const validate = useCallback((): FieldErrors => {
+    const errors: FieldErrors = {};
+    if (!email.trim()) errors.email = "Email is required.";
+    else if (!EMAIL_RE.test(email)) errors.email = "Enter a valid email address.";
+    if (!password) errors.password = "Password is required.";
+    else if (password.length < 6) errors.password = "Must be at least 6 characters.";
+    return errors;
+  }, [email, password]);
+
+  const errors = validate();
 
   async function getRedirectPath(knownRole?: string) {
     if (callbackUrl) return callbackUrl;
@@ -46,6 +66,11 @@ export function LoginForm({ callbackUrl: propCallbackUrl }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setTouched({ email: true, password: true });
+
+    const fieldErrors = validate();
+    if (Object.keys(fieldErrors).length > 0) return;
+
     setIsLoading(true);
 
     const result = await signIn("credentials", {
@@ -121,7 +146,13 @@ export function LoginForm({ callbackUrl: propCallbackUrl }: Props) {
           placeholder='you@example.com'
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
+          onBlur={() => setTouched((p) => ({ ...p, email: true }))}
+          aria-invalid={touched.email && !!errors.email || undefined}
+        />
+        <FieldTooltip
+          show={touched.email && !!errors.email}
+          message={errors.email ?? ""}
+          variant='error'
         />
       </div>
 
@@ -133,8 +164,13 @@ export function LoginForm({ callbackUrl: propCallbackUrl }: Props) {
           placeholder='••••••••'
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          required
-          minLength={6}
+          onBlur={() => setTouched((p) => ({ ...p, password: true }))}
+          aria-invalid={touched.password && !!errors.password || undefined}
+        />
+        <FieldTooltip
+          show={touched.password && !!errors.password}
+          message={errors.password ?? ""}
+          variant='error'
         />
       </div>
 

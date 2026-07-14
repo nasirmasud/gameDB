@@ -251,42 +251,42 @@ Login / Register
 
 ### Public Endpoints
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/api/games` | Fetch games from RAWG |
-| GET | `/api/games/[id]/reviews` | Paginated approved reviews for a game |
-| GET | `/api/hero-games` | Featured games for hero slider |
-| POST | `/api/register` | Create new user account |
+| Method | Route                     | Description                           |
+| ------ | ------------------------- | ------------------------------------- |
+| GET    | `/api/games`              | Fetch games from RAWG                 |
+| GET    | `/api/games/[id]/reviews` | Paginated approved reviews for a game |
+| GET    | `/api/hero-games`         | Featured games for hero slider        |
+| POST   | `/api/register`           | Create new user account               |
 
 ### Authenticated User Endpoints
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET/POST/DELETE | `/api/user/favorites` | Wishlist CRUD |
-| GET | `/api/user/reviews` | List user's reviews (paginated, filterable) |
-| GET/POST | `/api/user/custom-games` | Custom game listing & creation |
-| PATCH | `/api/user/custom-games/[id]` | Update custom game |
-| GET/PATCH/DELETE | `/api/user/profile` | Profile management (read, update, delete) |
-| GET | `/api/user/stats` | User dashboard statistics |
-| GET | `/api/user/charts` | User chart data (reviews, ratings, wishlist over time) |
-| GET | `/api/user/activity` | Recent user activity feed |
+| Method           | Route                         | Description                                            |
+| ---------------- | ----------------------------- | ------------------------------------------------------ |
+| GET/POST/DELETE  | `/api/user/favorites`         | Wishlist CRUD                                          |
+| GET              | `/api/user/reviews`           | List user's reviews (paginated, filterable)            |
+| GET/POST         | `/api/user/custom-games`      | Custom game listing & creation                         |
+| PATCH            | `/api/user/custom-games/[id]` | Update custom game                                     |
+| GET/PATCH/DELETE | `/api/user/profile`           | Profile management (read, update, delete)              |
+| GET              | `/api/user/stats`             | User dashboard statistics                              |
+| GET              | `/api/user/charts`            | User chart data (reviews, ratings, wishlist over time) |
+| GET              | `/api/user/activity`          | Recent user activity feed                              |
 
 ### Admin Endpoints
 
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | `/api/admin/stats` | Platform-wide statistics |
-| GET/PATCH/DELETE | `/api/admin/users/[id]` | User management (ban/unban/delete) |
-| GET | `/api/admin/games` | Game activity overview |
-| GET/PATCH/DELETE | `/api/admin/reviews/[id]` | Review moderation (approve/reject/delete) |
+| Method           | Route                          | Description                                           |
+| ---------------- | ------------------------------ | ----------------------------------------------------- |
+| GET              | `/api/admin/stats`             | Platform-wide statistics                              |
+| GET/PATCH/DELETE | `/api/admin/users/[id]`        | User management (ban/unban/delete)                    |
+| GET              | `/api/admin/games`             | Game activity overview                                |
+| GET/PATCH/DELETE | `/api/admin/reviews/[id]`      | Review moderation (approve/reject/delete)             |
 | GET/PATCH/DELETE | `/api/admin/custom-games/[id]` | Custom game moderation (publish/draft/archive/delete) |
-| GET | `/api/admin/charts` | Platform chart data |
-| GET | `/api/admin/activity` | Platform activity feed |
+| GET              | `/api/admin/charts`            | Platform chart data                                   |
+| GET              | `/api/admin/activity`          | Platform activity feed                                |
 
 ### Auth Endpoints
 
-| Method | Route | Description |
-|--------|-------|-------------|
+| Method   | Route                     | Description                                |
+| -------- | ------------------------- | ------------------------------------------ |
 | GET/POST | `/api/auth/[...nextauth]` | NextAuth handlers (login, logout, session) |
 
 ---
@@ -308,6 +308,7 @@ Login / Register
 
 ## User Roles & Permissions
 
+<<<<<<< HEAD
 | Feature | Visitor | User | Admin |
 | :------ | :-----: | :-: | :---: |
 | Browse Game Catalog | ✅ | ✅ | ✅ |
@@ -327,6 +328,27 @@ Login / Register
 | View Platform Activity Feed | ❌ | ❌ | ✅ |
 | System Status Monitoring | ❌ | ❌ | ✅ |
 | Delete Own Account | ❌ | ✅ | ❌ |
+=======
+| Feature                        | Visitor | User | Admin |
+| :----------------------------- | :-----: | :--: | :---: |
+| Browse Game Catalog            |   ✅    |  ✅  |  ✅   |
+| View Game Details              |   ✅    |  ✅  |  ✅   |
+| Search & Filter Games          |   ✅    |  ✅  |  ✅   |
+| Submit Reviews                 |   ❌    |  ✅  |  ✅   |
+| Manage Own Reviews             |   ❌    |  ✅  |  ✅   |
+| Add to Wishlist                |   ❌    |  ✅  |  ✅   |
+| Manage Own Wishlist            |   ❌    |  ✅  |  ✅   |
+| Submit Custom Games            |   ❌    |  ✅  |  ✅   |
+| Manage Own Custom Games        |   ❌    |  ✅  |  ✅   |
+| View Own Dashboard & Analytics |   ❌    |  ✅  |  ✅   |
+| Moderate All Reviews           |   ❌    |  ❌  |  ✅   |
+| Moderate All Custom Games      |   ❌    |  ❌  |  ✅   |
+| Manage All Users (Ban/Delete)  |   ❌    |  ❌  |  ✅   |
+| View Platform Analytics        |   ❌    |  ❌  |  ✅   |
+| View Platform Activity Feed    |   ❌    |  ❌  |  ✅   |
+| System Status Monitoring       |   ❌    |  ❌  |  ✅   |
+| Delete Own Account             |   ❌    |  ✅  |  ❌   |
+>>>>>>> 0cedaf2 (Added user profile management with image upload and display.)
 
 ---
 

@@ -1,93 +1,5 @@
-// import { getGameById, getGames } from "@/lib/rawg";
-// import { NextResponse } from "next/server";
-
-// function stripHtml(text: string | null | undefined) {
-//   if (!text) return "";
-//   return text.replace(/<[^>]*>/g, "").trim();
-// }
-
-// function normalizePlatformSlugs(
-//   platforms: Array<{ platform: { slug?: string | null } }> | undefined,
-// ) {
-//   const slugs = new Set<string>();
-
-//   for (const entry of platforms ?? []) {
-//     const slug = entry.platform?.slug?.toLowerCase();
-//     if (!slug) continue;
-
-//     if (slug === "pc") {
-//       slugs.add("pc");
-//     } else if (slug.includes("playstation")) {
-//       slugs.add("playstation");
-//     } else if (slug.includes("xbox")) {
-//       slugs.add("xbox");
-//     }
-//   }
-
-//   return Array.from(slugs);
-// }
-
-// function mapHeroGame(game: any) {
-//   return {
-//     id: game.id,
-//     slug: game.slug,
-//     name: game.name,
-//     background_image: game.background_image ?? null,
-//     rating: game.rating ?? 0,
-//     ratings_count: game.ratings_count ?? 0,
-//     metacritic: game.metacritic ?? null,
-//     description: stripHtml(game.description_raw).slice(0, 180),
-//     platformSlugs: normalizePlatformSlugs(game.platforms),
-//   };
-// }
-
-// export async function GET() {
-//   try {
-//     // বেশি গেম আনি (৪০টা) যাতে filter করার পরও যথেষ্ট অপশন থাকে
-//     const gamesResponse = await getGames({
-//       page_size: 40,
-//       ordering: "-rating",
-//     });
-//     const candidates = gamesResponse.results ?? [];
-
-//     // অন্তত ৫০০ জন রেট করেছে এমন গেমই নেয়া হবে — নাহলে low-sample obscure game ঢুকে যায়
-//     const MIN_RATINGS_COUNT = 500;
-//     const trustworthy = candidates.filter(
-//       (game) => (game.ratings_count ?? 0) >= MIN_RATINGS_COUNT,
-//     );
-
-//     // এরপরও filter-এ কিছু না থাকলে (rare edge case) threshold কমিয়ে fallback করো
-//     const pool = trustworthy.length >= 5 ? trustworthy : candidates;
-
-//     const topGames = [...pool]
-//       .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
-//       .slice(0, 5);
-
-//     const heroGames = await Promise.all(
-//       topGames.map(async (game) => {
-//         try {
-//           const detail = await getGameById(game.id);
-//           return mapHeroGame(detail);
-//         } catch {
-//           return mapHeroGame(game);
-//         }
-//       }),
-//     );
-
-//     return NextResponse.json({ results: heroGames });
-//   } catch (error) {
-//     console.error("Failed to load hero games", error);
-//     return NextResponse.json({ results: [] }, { status: 500 });
-//   }
-// }
-
-import { getGameById, getGames } from "@/lib/rawg";
+import { getGames } from "@/lib/rawg";
 import { NextResponse } from "next/server";
-
-function stripHtml(text: string | null | undefined) {
-  if (!text) return "";
-  return text.replace(/<[^>]*>/g, "").trim();
-}
 
 function normalizePlatformSlugs(
   platforms: Array<{ platform: { slug?: string | null } }> | undefined,
@@ -119,7 +31,7 @@ function mapHeroGame(game: any) {
     rating: game.rating ?? 0,
     ratings_count: game.ratings_count ?? 0,
     metacritic: game.metacritic ?? null,
-    description: stripHtml(game.description_raw).slice(0, 180),
+    description: "",
     platformSlugs: normalizePlatformSlugs(game.platforms),
   };
 }
@@ -179,18 +91,7 @@ export async function GET() {
 
     const topGames = deduped.slice(0, 5);
 
-    const heroGames = await Promise.all(
-      topGames.map(async (game) => {
-        try {
-          const detail = await getGameById(game.id);
-          return mapHeroGame(detail);
-        } catch {
-          return mapHeroGame(game);
-        }
-      }),
-    );
-
-    return NextResponse.json({ results: heroGames });
+    return NextResponse.json({ results: topGames.map(mapHeroGame) });
   } catch (error) {
     console.error("Failed to load hero games", error);
     return NextResponse.json({ results: [] }, { status: 500 });

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trash2, ShieldCheck, Ban, User as UserIcon, Loader2, CheckCircle, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { toast } from "sonner";
 
@@ -11,6 +12,7 @@ interface UserRow {
   email: string;
   role: string;
   isBanned: boolean;
+  image?: string;
   createdAt: string;
   reviewCount: number;
   favoriteCount: number;
@@ -142,9 +144,12 @@ export function AdminUsersTable({ users }: AdminUsersTableProps) {
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-secondary text-xs font-bold">
-                        {u.name.charAt(0).toUpperCase()}
-                      </div>
+                      <Avatar className="h-8 w-8 border border-border">
+                        <AvatarImage src={u.image} alt={u.name} />
+                        <AvatarFallback className="text-xs font-bold">
+                          {u.name.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
                       <span className="font-medium">{u.name}</span>
                     </div>
                   </td>
